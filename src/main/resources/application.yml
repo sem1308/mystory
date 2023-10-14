@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/jpashop
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/mystory_db?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: 1308
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         #        show_sql : true # sout?? ??
