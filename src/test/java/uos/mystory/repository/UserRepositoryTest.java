@@ -1,5 +1,6 @@
 package uos.mystory.repository;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,16 +13,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 public class UserRepositoryTest {
     @Autowired UserRepository userRepository;
+    @Autowired EntityManager em;
 
     @Test
     public void 유저_회원가입() throws Exception {
         //given
-        User user = User.createUser("sem1308", "1308", "ddory", "01000000000");
+        User user = User.create("sem1308", "1308", "ddory", "01000000000");
 
         //when
-        User saved = userRepository.save(user);
+        userRepository.save(user);
 
-        //then
+        User saved = userRepository.getReferenceById(user.getId());
+
+                //then
         assertEquals(user, saved);
     }
     
@@ -37,15 +41,17 @@ public class UserRepositoryTest {
 
         user.update(null, updatedPw, updatedNickname, updatedPhoneNum);
 
+        User updatedUser = userRepository.getReferenceById(user.getId());
+
         //then
-        assertEquals(user.getUserId(), "sem1308");
-        assertEquals(user.getUserPw(), updatedPw);
-        assertEquals(user.getNickname(), updatedNickname);
-        assertEquals(user.getPhoneNum(), updatedPhoneNum);
+        assertEquals(updatedUser.getUserId(), "sem1308");
+        assertEquals(updatedUser.getUserPw(), updatedPw);
+        assertEquals(updatedUser.getNickname(), updatedNickname);
+        assertEquals(updatedUser.getPhoneNum(), updatedPhoneNum);
     }
 
     private User save_user(){
-        User user = User.createUser("sem1308", "1308", "ddory", "01000000000");
+        User user = User.create("sem1308", "1308", "ddory", "01000000000");
 
         return userRepository.save(user);
     }
