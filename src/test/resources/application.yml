@@ -1,0 +1,25 @@
+spring:
+# spring은 기본적으로 설정이 없으면 test모드로 돌림 - h2 driver 있어야함
+#  datasource:
+#    url: jdbc:h2:mem:test # db 띄우지 않고 가능
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop # create 후에 table 전부 drop
+#    properties:
+#      hibernate:
+##        show_sql : true # sout으로 찍힘
+#        format_sql: true # 출력이 보기 좋게 나옴
+
+logging:
+  level:
+    org.hibernate.SQL: debug # log로 찍힘
+    org.hibernate.orm.jdbc.bind: trace # 쿼리 파라미터 로그 남기기
+
+decorator:
+  datasource:
+    p6spy:
+      multiline: true
