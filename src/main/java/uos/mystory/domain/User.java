@@ -34,13 +34,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdDateTime;
 
     //==생성 메소드==//
-    public static User createUser(String userId, String userPw, String nickname, String phoneNum){
+    public static User create(String userId, String userPw, String nickname, String phoneNum){
         // TODO: 비밀번호 암호화 or 암호화된 비밀번호 받기
         return new UserBuilder().userId(userId).userPw(userPw).nickname(nickname).phoneNum(phoneNum)
-                .role(UserRole.M).maxNumBlog(5).createdAt(LocalDateTime.now()).build();
+                .role(UserRole.M).maxNumBlog(5).createdDateTime(LocalDateTime.now()).build();
     }
 
     //==변경 메소드==//

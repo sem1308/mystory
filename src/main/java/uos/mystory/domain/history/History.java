@@ -2,6 +2,7 @@ package uos.mystory.domain.history;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,8 @@ public abstract class History {
     @Id @GeneratedValue
     private Long id;
 
-    private Integer visits;
+    @ColumnDefault("0")
+    protected Integer visits;
 
-    private LocalDateTime createdDateTime;
+    protected LocalDateTime createdDateTime;
 }
