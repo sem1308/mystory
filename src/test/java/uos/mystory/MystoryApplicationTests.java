@@ -2,12 +2,13 @@ package uos.mystory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-class MystoryApplicationTests {
-
+@Transactional
+public class MystoryApplicationTests {
 	@Test
-	void contextLoads() {
+	public void contextLoad() throws Exception {
 	}
 
 }
