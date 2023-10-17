@@ -6,4 +6,5 @@ import uos.mystory.domain.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    Long countByUserId(String userId);
 }
