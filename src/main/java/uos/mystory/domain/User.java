@@ -6,7 +6,7 @@ import uos.mystory.domain.enums.UserRole;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "users") // user가 DB에서 예약어인 경우가 있어 users로 table 이름 변경
 @Getter
 @Builder(access = AccessLevel.PROTECTED) // 생성로직은 오직 User에서만 할 수 있게
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,7 +38,6 @@ public class User {
 
     //==생성 메소드==//
     public static User create(String userId, String userPw, String nickname, String phoneNum){
-        // TODO: 비밀번호 암호화 or 암호화된 비밀번호 받기
         return new UserBuilder().userId(userId).userPw(userPw).nickname(nickname).phoneNum(phoneNum)
                 .role(UserRole.M).maxNumBlog(5).createdDateTime(LocalDateTime.now()).build();
     }
