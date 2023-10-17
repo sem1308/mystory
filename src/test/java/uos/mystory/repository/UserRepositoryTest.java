@@ -25,7 +25,7 @@ public class UserRepositoryTest {
 
         User saved = userRepository.getReferenceById(user.getId());
 
-                //then
+        //then
         assertEquals(user, saved);
     }
     
