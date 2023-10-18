@@ -59,6 +59,7 @@ class PostServiceTest {
         //then
         assertEquals(post.getId(),id);
         System.out.println(post);
+        //test
     }
 
 
