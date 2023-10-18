@@ -2,6 +2,7 @@ package uos.mystory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -16,9 +17,13 @@ public class Blog {
     @Column(length = 100)
     private String name;
 
-    @Column(length = 2000)
+    @Column(length = 2000, unique = true)
     private String url;
 
+    @Column(length = 500)
+    private String description;
+
+    @ColumnDefault("0")
     private Integer visits;
 
     /**
@@ -29,13 +34,18 @@ public class Blog {
     private User user;
 
     //==생성 메소드==//
-    public static Blog create(String name, String url, User user){
-        return new BlogBuilder().name(name).url(url).user(user).build();
+    public static Blog create(String name, String url, String description, User user){
+        return new BlogBuilder().name(name).url(url).description(description).visits(0).user(user).build();
     }
 
     //==변경 메소드==//
-    public void update(String name, String url){
+    public void update(String name, String url, String description){
         this.name = name == null ? this.name : name;
         this.url = url == null ? this.url : url;
+        this.description = description == null ? this.description : description;
+    }
+
+    public String toString() {
+        return "[name] : "+name+", [url] : "+url+", [description] : "+description+", [visits] : "+visits;
     }
 }
