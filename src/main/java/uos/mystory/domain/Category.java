@@ -34,4 +34,8 @@ public class Category {
     public void update(String name){
         this.name = name == null ? this.name : name;
     }
+
+    public String toString() {
+        return "[name] : "+name+", [blog] : "+blog.getName();
+    }
 }
