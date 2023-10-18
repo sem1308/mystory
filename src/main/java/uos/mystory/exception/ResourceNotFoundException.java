@@ -3,7 +3,7 @@ package uos.mystory.exception;
 import uos.mystory.exception.massage.MessageManager;
 
 public class ResourceNotFoundException extends RuntimeException {
-    private static final String defaultMessage = MessageManager.getMessage("error.user.notfound");
+    private static final String defaultMessage = MessageManager.getMessage("error.notfound");
     public ResourceNotFoundException() {
         super(defaultMessage);
     }
