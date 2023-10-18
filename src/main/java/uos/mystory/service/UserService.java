@@ -6,16 +6,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateUserDTO;
-import uos.mystory.exception.DuplicateUserIdException;
+import uos.mystory.exception.DuplicateException;
 import uos.mystory.exception.PasswordMismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
+import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -25,6 +28,7 @@ public class UserService {
      * @return 유저 번호
      * @title 유저 회원가입
      */
+    @Transactional(readOnly = false)
     public Long saveUser(@NotNull InsertUserDTO userDTO) {
         // 아이디 중복 체크
         validateUserIdDuplication(userDTO.getUserId());
@@ -41,7 +45,7 @@ public class UserService {
     private void validateUserIdDuplication(String userId) {
         Long numOfUser = userRepository.countByUserId(userId);
         if (numOfUser != 0) {
-            throw new DuplicateUserIdException();
+            throw new DuplicateException(MessageManager.getMessage("error.duplicate.user.user_id"));
         }
     }
 
@@ -67,7 +71,8 @@ public class UserService {
      * @return 유저 엔티티
      * @title 유저 정보 변경
      */
-    public void update(@NotNull UpdateUserDTO updateUserDTO) {
+    @Transactional(readOnly = false)
+    public void updateUser(@NotNull UpdateUserDTO updateUserDTO) {
         User user = getUser(updateUserDTO.getId());
         user.update(updateUserDTO.getUserPw(),updateUserDTO.getNickname(), updateUserDTO.getPhoneNum());
     }
@@ -78,7 +83,7 @@ public class UserService {
      * @title 유저 번호로 유저 불러오기
      */
     public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.user")));
     }
 
     /**
@@ -87,7 +92,7 @@ public class UserService {
      * @title 유저 아이디로 유저 불러오기
      */
     public User getUserByUserId(String userId) {
-        return userRepository.findByUserId(userId).orElseThrow(ResourceNotFoundException::new);
+        return userRepository.findByUserId(userId).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.user")));
     }
 
     /**

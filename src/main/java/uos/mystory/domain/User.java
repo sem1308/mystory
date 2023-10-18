@@ -16,16 +16,16 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "id", length = 100)
+    @Column(name = "id", length = 100, unique = true)
     private String userId;
 
     @Column(name = "pw", length = 500)
     private String userPw;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true)
     private String nickname;
 
-    @Column(length = 11)
+    @Column(length = 11, unique = true)
     private String phoneNum;
 
     @Column(columnDefinition = "TINYINT default 5")
@@ -49,4 +49,8 @@ public class User {
         this.phoneNum = phoneNum == null ? this.phoneNum : phoneNum;
     }
 
+
+    public String toString() {
+        return "[userId] : "+userId+", [userPw] : "+userPw+", [nickname] : "+nickname+", [role] : "+role;
+    }
 }

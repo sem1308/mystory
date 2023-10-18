@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateUserDTO;
-import uos.mystory.exception.DuplicateUserIdException;
+import uos.mystory.exception.DuplicateException;
 import uos.mystory.exception.PasswordMismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
 
@@ -42,7 +42,7 @@ public class UserServiceTest {
         InsertUserDTO userDTO2 = new InsertUserDTO("sem1308", "1308", "ddory", "01000000000");
 
         //then
-        assertThrows(DuplicateUserIdException.class, () -> {
+        assertThrows(DuplicateException.class, () -> {
             userService.saveUser(userDTO2);
         });
     }
@@ -74,7 +74,7 @@ public class UserServiceTest {
         Long id = userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
 
         //when
-        userService.update(new UpdateUserDTO(id,null,updatedNickname,updatedPhoneNum));
+        userService.updateUser(new UpdateUserDTO(id,null,updatedNickname,updatedPhoneNum));
 
         //then
         User user = userService.getUser(id);
