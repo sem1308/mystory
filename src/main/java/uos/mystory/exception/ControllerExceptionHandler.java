@@ -34,8 +34,8 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<ErrorResponse>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DuplicateUserIdException.class)
-    public ResponseEntity<ErrorResponse> handleDataFormatException(DuplicateUserIdException ex, WebRequest request) {
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<ErrorResponse> handleDataFormatException(DuplicateException ex, WebRequest request) {
         String url = ((ServletWebRequest) request).getRequest().getRequestURI();
 
         ErrorResponse message = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), url, ex.getMessage(),
