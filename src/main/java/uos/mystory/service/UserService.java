@@ -8,9 +8,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
+import uos.mystory.dto.mapping.update.UpdateUserDTO;
 import uos.mystory.exception.DuplicateUserIdException;
+import uos.mystory.exception.PasswordMismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
-import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.UserRepository;
 
 @Service
@@ -26,7 +27,7 @@ public class UserService {
      */
     public Long saveUser(@NotNull InsertUserDTO userDTO) {
         // 아이디 중복 체크
-        validateDuplication(userDTO.getUserId());
+        validateUserIdDuplication(userDTO.getUserId());
 
         // 비밀번호 암호화
         String userPw = passwordEncoder.encode(userDTO.getUserPw());
@@ -37,11 +38,38 @@ public class UserService {
         return userRepository.save(user).getId();
     }
 
-    private void validateDuplication(String userId) {
+    private void validateUserIdDuplication(String userId) {
         Long numOfUser = userRepository.countByUserId(userId);
         if (numOfUser != 0) {
-            throw new DuplicateUserIdException(MessageManager.getMessage("error.user.user_id.duplicate"));
+            throw new DuplicateUserIdException();
         }
+    }
+
+    /**
+     * @param userId, userPw
+     * @return 유저 엔티티
+     * @title 유저 로그인
+     */
+    public User signIn(String userId, String userPw) {
+        // 유저 아이디로 유저 엔티티 가져오기
+        User user = getUserByUserId(userId);
+
+        // 비밀번호 일치 확인
+        if(!passwordEncoder.matches(userPw,user.getUserPw())){
+            throw new PasswordMismatchException();
+        }
+
+        return user;
+    }
+
+    /**
+     * @param updateUserDTO
+     * @return 유저 엔티티
+     * @title 유저 정보 변경
+     */
+    public void update(@NotNull UpdateUserDTO updateUserDTO) {
+        User user = getUser(updateUserDTO.getId());
+        user.update(updateUserDTO.getUserPw(),updateUserDTO.getNickname(), updateUserDTO.getPhoneNum());
     }
 
     /**
@@ -50,8 +78,16 @@ public class UserService {
      * @title 유저 번호로 유저 불러오기
      */
     public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException(MessageManager.getMessage("error.user.notfound")));
+        return userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    /**
+     * @param userId
+     * @return 유저
+     * @title 유저 아이디로 유저 불러오기
+     */
+    public User getUserByUserId(String userId) {
+        return userRepository.findByUserId(userId).orElseThrow(ResourceNotFoundException::new);
     }
 
     /**
