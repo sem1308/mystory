@@ -6,4 +6,5 @@ import uos.mystory.domain.Post;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
+    Long countByUrl(String url);
 }

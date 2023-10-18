@@ -34,7 +34,7 @@ public class Post {
     @Enumerated(EnumType.STRING)
     private OpenState openState;
 
-    @Column(length = 2000)
+    @Column(length = 2000, unique = true)
     private String url;
 
     @Column(length = 500)
@@ -74,14 +74,19 @@ public class Post {
 
     //==변경 메소드==//
     public void update(PostType postType, String title, String content, WriteType writeType,
-                       OpenState openState, String url, String titleImgPath, Category category){
+                       OpenState openState, String titleImgPath, Category category){
         this.postType = postType == null ? this.postType : postType;
         this.title = title == null ? this.title : title;
         this.content = content == null ? this.content : content;
         this.writeType = writeType == null ? this.writeType : writeType;
         this.openState = openState == null ? this.openState : openState;
-        this.url = url == null ? this.url : url;
         this.titleImgPath = titleImgPath == null ? this.titleImgPath : titleImgPath;
         this.category = category == null ? this.category : category;
+    }
+
+    public String toString() {
+        return "[postType] : "+postType.toString()+", [title] : "+title+", [content] : "+content+", [writeType] : "+writeType.toString()
+                +", [openState] : "+openState.toString()+", [url] : "+url+", [titleImgPath] : "+titleImgPath+", [user] : "+user.getUserId()
+                +", [category] : "+category.getName()+", [blog] : "+blog.getName();
     }
 }
