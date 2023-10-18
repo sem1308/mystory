@@ -43,10 +43,10 @@ public class User {
     }
 
     //==변경 메소드==//
-    public void update(String userId, String userPw, String nickname, String phoneNum){
-        this.userId = userId == null ? this.userId : userId;
+    public void update(String userPw, String nickname, String phoneNum){
         this.userPw = userPw == null ? this.userPw : userPw;
         this.nickname = nickname == null ? this.nickname : nickname;
         this.phoneNum = phoneNum == null ? this.phoneNum : phoneNum;
     }
+
 }
