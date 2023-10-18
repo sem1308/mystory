@@ -35,17 +35,15 @@ public class UserRepositoryTest {
         User user = save_user();
 
         //when
-        String updatedPw = "13081";
         String updatedNickname = "ddori";
         String updatedPhoneNum = "01011111111";
 
-        user.update(null, updatedPw, updatedNickname, updatedPhoneNum);
+        user.update(null, updatedNickname, updatedPhoneNum);
 
         User updatedUser = userRepository.getReferenceById(user.getId());
 
         //then
-        assertEquals(updatedUser.getUserId(), "sem1308");
-        assertEquals(updatedUser.getUserPw(), updatedPw);
+        assertEquals(updatedUser.getUserPw(), "1308");
         assertEquals(updatedUser.getNickname(), updatedNickname);
         assertEquals(updatedUser.getPhoneNum(), updatedPhoneNum);
     }
