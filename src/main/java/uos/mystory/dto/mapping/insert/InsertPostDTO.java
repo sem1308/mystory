@@ -1,6 +1,7 @@
 package uos.mystory.dto.mapping.insert;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.Category;
@@ -10,17 +11,17 @@ import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class InsertPostDTO {
     private PostType postType;
-
-    private String title;
-
-    private String content;
 
     private WriteType writeType;
 
     private OpenState openState;
+
+    private String title;
+
+    private String content;
 
     private String url;
 

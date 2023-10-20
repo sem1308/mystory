@@ -1,11 +1,12 @@
 package uos.mystory.dto.mapping.insert;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import uos.mystory.domain.User;
 
-@AllArgsConstructor
+
 @Getter
+@Builder
 public class InsertBlogDTO {
     private String name;
 

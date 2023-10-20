@@ -1,10 +1,11 @@
 package uos.mystory.dto.mapping.insert;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
-@AllArgsConstructor
+
 @Getter
+@Builder
 public class InsertUserDTO {
     String userId;
     String userPw;

@@ -1,19 +1,15 @@
 package uos.mystory.dto.mapping.update;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import uos.mystory.domain.Category;
-import uos.mystory.domain.User;
 import uos.mystory.domain.enums.OpenState;
-import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class UpdatePostDTO {
     private Long id;
-
-    private PostType postType;
 
     private String title;
 
