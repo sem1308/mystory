@@ -35,7 +35,7 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<ErrorResponse> handleDataFormatException(DuplicateException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleDuplicateException(DuplicateException ex, WebRequest request) {
         String url = ((ServletWebRequest) request).getRequest().getRequestURI();
 
         ErrorResponse message = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), url, ex.getMessage(),
@@ -60,6 +60,26 @@ public class ControllerExceptionHandler {
 
         String firstBindingMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         ErrorResponse message = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), url, firstBindingMessage,
+                request.getDescription(false));
+
+        return new ResponseEntity<ErrorResponse>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(LimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handleLimitExceededException(LimitExceededException ex, WebRequest request) {
+        String url = ((ServletWebRequest) request).getRequest().getRequestURI();
+
+        ErrorResponse message = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), url, ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<ErrorResponse>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMismatchException(MismatchException ex, WebRequest request) {
+        String url = ((ServletWebRequest) request).getRequest().getRequestURI();
+
+        ErrorResponse message = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), new Date(), url, ex.getMessage(),
                 request.getDescription(false));
 
         return new ResponseEntity<ErrorResponse>(message, HttpStatus.BAD_REQUEST);
