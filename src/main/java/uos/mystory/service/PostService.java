@@ -9,6 +9,7 @@ import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
 import uos.mystory.exception.DuplicateException;
+import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.PostRepository;
@@ -19,25 +20,24 @@ public class PostService {
     private final PostRepository postRepository;
 
     /**
-     * @param postDTO
-     * @return 게시글 번호
      * @title 게시글 등록
+     * @param insertPostDTO
+     * @return 게시글 번호
      */
-    public Long savePost(@NotNull InsertPostDTO postDTO) {
+    public Long savePost(@NotNull InsertPostDTO insertPostDTO) {
         // url 중복 체크
-        validateUrlDuplication(postDTO.getUrl());
+        validateUrlDuplication(insertPostDTO.getUrl());
         // 글 쓴 user가 blog를 생성한 user인지 체크
-        validateBlogOwner(postDTO.getBlog(), postDTO.getUser());
+        validateBlogOwner(insertPostDTO.getBlog(), insertPostDTO.getUser());
 
-        Post post = Post.create(postDTO.getPostType(), postDTO.getTitle(), postDTO.getContent(), postDTO.getWriteType(), postDTO.getOpenState()
-                    , postDTO.getUrl(), postDTO.getTitleImgPath(), postDTO.getUser(), postDTO.getCategory(), postDTO.getBlog());
+        Post post = Post.create(insertPostDTO);
 
         return postRepository.save(post).getId();
     }
 
     private void validateBlogOwner(Blog blog, User user) {
         if (!blog.getUser().equals(user)) {
-            throw new DuplicateException(MessageManager.getMessage("error.duplicate.url"));
+            throw new MismatchException(MessageManager.getMessage("error.mismatch.blog.user"));
         }
     }
 
@@ -49,23 +49,25 @@ public class PostService {
     }
 
     /**
-     * @param postDTO
-     * @return 게시글 번호
-     * @title 게시글 등록
+     * @title 게시글 변경
+     * @param updatePostDTO
+     * @return
      */
-    public void updatePost(@NotNull UpdatePostDTO postDTO) {
-        Post post = getPost(postDTO.getId());
-        post.update(postDTO.getPostType(),postDTO.getTitle(),postDTO.getContent(),postDTO.getWriteType()
-                    ,postDTO.getOpenState(),postDTO.getTitleImgPath(),postDTO.getCategory());
+    public void updatePost(@NotNull UpdatePostDTO updatePostDTO) {
+        Post post = getPost(updatePostDTO.getId());
+        post.update(updatePostDTO);
     }
 
     /**
+     * @title 게시글 번호로 게시글 가져오기
      * @param id
-     * @return 게시글 번호
-     * @title 게시글 등록
+     * @return 게시글 엔티티
      */
     public Post getPost(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
+        // 조회수 1 증가
+        post.addVisits();
+        return post;
     }
 
 }

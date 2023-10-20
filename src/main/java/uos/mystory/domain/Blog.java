@@ -3,6 +3,10 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import uos.mystory.dto.mapping.insert.InsertBlogDTO;
+import uos.mystory.dto.mapping.update.UpdateBlogDTO;
+
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -34,15 +38,25 @@ public class Blog {
     private User user;
 
     //==생성 메소드==//
-    public static Blog create(String name, String url, String description, User user){
-        return new BlogBuilder().name(name).url(url).description(description).visits(0).user(user).build();
+    public static Blog create(InsertBlogDTO insertBlogDTO){
+        return new BlogBuilder().name(insertBlogDTO.getName()).url(insertBlogDTO.getUrl())
+                .description(insertBlogDTO.getDescription()).visits(0).user(insertBlogDTO.getUser()).build();
     }
 
     //==변경 메소드==//
-    public void update(String name, String url, String description){
-        this.name = name == null ? this.name : name;
-        this.url = url == null ? this.url : url;
-        this.description = description == null ? this.description : description;
+    public void update(UpdateBlogDTO updateBlogDTO){
+        this.name = Optional.ofNullable(updateBlogDTO.getName()).orElse(this.name);
+        this.url = Optional.ofNullable(updateBlogDTO.getUrl()).orElse(this.url);
+        this.description = Optional.ofNullable(updateBlogDTO.getDescription()).orElse(this.description);
+    }
+
+    //==비즈니스 로직==//
+
+    /**
+     * 조회수 1 증가
+     */
+    public void addVisits() {
+        this.visits += 1;
     }
 
     public String toString() {

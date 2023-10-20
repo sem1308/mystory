@@ -2,8 +2,11 @@ package uos.mystory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import uos.mystory.dto.mapping.insert.InsertCommentDTO;
+import uos.mystory.dto.mapping.update.UpdateCommentDTO;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -30,12 +33,16 @@ public class Comment {
     private Post post;
 
     //==생성 메소드==//
-    public static Comment create(String content, Post post){
-        return new CommentBuilder().content(content).createdDateTime(LocalDateTime.now()).post(post).build();
+    public static Comment create(InsertCommentDTO insertCommentDTO){
+        return new CommentBuilder().content(insertCommentDTO.getContent()).createdDateTime(LocalDateTime.now()).post(insertCommentDTO.getPost()).build();
     }
 
     //==변경 메소드==//
-    public void update(String content){
-        this.content = content == null ? this.content : content;
+    public void update(UpdateCommentDTO updateCommentDTO){
+        this.content = Optional.ofNullable(updateCommentDTO.getContent()).orElse(this.content);
+    }
+
+    public String toString() {
+        return "[content] : "+content+", [post] : "+post.getTitle();
     }
 }

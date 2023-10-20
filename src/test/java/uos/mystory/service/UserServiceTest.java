@@ -8,7 +8,7 @@ import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateUserDTO;
 import uos.mystory.exception.DuplicateException;
-import uos.mystory.exception.PasswordMismatchException;
+import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,12 +21,14 @@ public class UserServiceTest {
     UserService userService;
 
     @Test
-    public void 유저_회원가입() throws Exception {
+    private void 유저_회원가입() throws Exception {
         //given
-        Long id = userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
 
         //when
         User user = userService.getUser(id);
+
+        System.out.println(user);
 
         //then
         assertEquals(user.getId(), id);
@@ -34,12 +36,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void 유저_회원가입_중복체크() throws Exception {
+    private void 유저_회원가입_중복체크() throws Exception {
         //given
-        Long id = userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
 
         //when
-        InsertUserDTO userDTO2 = new InsertUserDTO("sem1308", "1308", "ddory", "01000000000");
+        InsertUserDTO userDTO2 = InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build();;
 
         //then
         assertThrows(DuplicateException.class, () -> {
@@ -48,9 +50,9 @@ public class UserServiceTest {
     }
     
     @Test
-    public void 유저_로그인() throws Exception {
+    private void 유저_로그인() throws Exception {
         //given
-        userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
+        userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
 
         //when
         //then
@@ -61,20 +63,20 @@ public class UserServiceTest {
             userService.signIn("sem13081", "1308");
         });
         // 비밀번호 불일치
-        assertThrows(PasswordMismatchException.class, () -> {
+        assertThrows(MismatchException.class, () -> {
             userService.signIn("sem1308", "13081");
         });
     }
     
     @Test
-    public void 유저_정보변경() throws Exception {
+    private void 유저_정보변경() throws Exception {
         //given
         String updatedNickname = "ddori";
         String updatedPhoneNum = "01011111111";
-        Long id = userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
 
         //when
-        userService.updateUser(new UpdateUserDTO(id,null,updatedNickname,updatedPhoneNum));
+        userService.updateUser(UpdateUserDTO.builder().id(id).userPw(null).nickname(updatedNickname).phoneNum(updatedPhoneNum).build());
 
         //then
         User user = userService.getUser(id);
@@ -82,4 +84,5 @@ public class UserServiceTest {
         assertEquals(user.getPhoneNum(),updatedPhoneNum);
 
     }
+
 }

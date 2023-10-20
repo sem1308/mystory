@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.User;
+import uos.mystory.dto.mapping.insert.InsertUserDTO;
+import uos.mystory.dto.mapping.update.UpdateUserDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +20,7 @@ public class UserRepositoryTest {
     @Test
     public void 유저_회원가입() throws Exception {
         //given
-        User user = User.create("sem1308", "1308", "ddory", "01000000000");
+        User user = User.create(getInsertUserDTO());
 
         //when
         userRepository.save(user);
@@ -38,7 +40,7 @@ public class UserRepositoryTest {
         String updatedNickname = "ddori";
         String updatedPhoneNum = "01011111111";
 
-        user.update(null, updatedNickname, updatedPhoneNum);
+        user.update(UpdateUserDTO.builder().id(user.getId()).userPw(null).nickname(updatedNickname).phoneNum(updatedPhoneNum).build());
 
         User updatedUser = userRepository.getReferenceById(user.getId());
 
@@ -49,9 +51,13 @@ public class UserRepositoryTest {
     }
 
     private User save_user(){
-        User user = User.create("sem1308", "1308", "ddory", "01000000000");
+        User user = User.create(getInsertUserDTO());
 
         return userRepository.save(user);
+    }
+
+    private InsertUserDTO getInsertUserDTO() {
+        return InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build();
     }
 
     

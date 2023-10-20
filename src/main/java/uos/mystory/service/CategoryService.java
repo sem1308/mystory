@@ -19,7 +19,7 @@ public class CategoryService {
      * @title 특정 블로그의 카테고리 생성
      */
     public Long saveCategory(InsertCategoryDTO insertCategoryDTO) {
-        Category category = Category.create(insertCategoryDTO.getName(), insertCategoryDTO.getBlog());
+        Category category = Category.create(insertCategoryDTO);
         return categoryRepository.save(category).getId();
     }
 

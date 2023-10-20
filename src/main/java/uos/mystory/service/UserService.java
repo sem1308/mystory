@@ -11,7 +11,6 @@ import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateUserDTO;
 import uos.mystory.exception.DuplicateException;
-import uos.mystory.exception.PasswordMismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.UserRepository;
@@ -24,20 +23,19 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * @param userDTO
+     * @param insertUserDTO
      * @return 유저 번호
      * @title 유저 회원가입
      */
     @Transactional(readOnly = false)
-    public Long saveUser(@NotNull InsertUserDTO userDTO) {
+    public Long saveUser(@NotNull InsertUserDTO insertUserDTO) {
         // 아이디 중복 체크
-        validateUserIdDuplication(userDTO.getUserId());
-
-        // 비밀번호 암호화
-        String userPw = passwordEncoder.encode(userDTO.getUserPw());
+        validateUserIdDuplication(insertUserDTO.getUserId());
 
         // entity 생성
-        User user = User.create(userDTO.getUserId(), userPw, userDTO.getNickname(), userDTO.getPhoneNum());
+        User user = User.create(insertUserDTO);
+        // 비밀번호 암호화
+        user.encodePassword(passwordEncoder);
 
         return userRepository.save(user).getId();
     }
@@ -59,9 +57,7 @@ public class UserService {
         User user = getUserByUserId(userId);
 
         // 비밀번호 일치 확인
-        if(!passwordEncoder.matches(userPw,user.getUserPw())){
-            throw new PasswordMismatchException();
-        }
+        user.validatePassword(passwordEncoder, userPw);
 
         return user;
     }
@@ -74,7 +70,7 @@ public class UserService {
     @Transactional(readOnly = false)
     public void updateUser(@NotNull UpdateUserDTO updateUserDTO) {
         User user = getUser(updateUserDTO.getId());
-        user.update(updateUserDTO.getUserPw(),updateUserDTO.getNickname(), updateUserDTO.getPhoneNum());
+        user.update(updateUserDTO);
     }
 
     /**

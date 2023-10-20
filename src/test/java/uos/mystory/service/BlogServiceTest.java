@@ -20,18 +20,18 @@ public class BlogServiceTest {
     BlogService blogService;
     @Autowired
     UserService userService;
-    private User user;
+    User user;
 
     @BeforeEach
     public void setup() {
-        Long id = userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
         this.user = userService.getUser(id);
     }
 
     @Test
     public void 블로그_생성() throws Exception {
         //given
-        InsertBlogDTO insertBlogDTO = new InsertBlogDTO("Dev", "https://han-dev.mystory.com", "기본 블로그", user);
+        InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build();
 
         //when
         Long id = blogService.saveBlog(insertBlogDTO);
@@ -46,13 +46,13 @@ public class BlogServiceTest {
     @Test
     public void 블로그_변경() throws Exception {
         //given
-        InsertBlogDTO insertBlogDTO = new InsertBlogDTO("Dev", "https://han-dev.mystory.com", "기본 블로그", user);
+        InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build();
         Long id = blogService.saveBlog(insertBlogDTO);
 
         String updatedName = "Han-Dev";
         String updatedDesc = "상향된 블로그";
         String updatedUrl = null;
-        UpdateBlogDTO updateBlogDTO = new UpdateBlogDTO(id, updatedName, updatedUrl, updatedDesc);
+        UpdateBlogDTO updateBlogDTO = UpdateBlogDTO.builder().id(id).name(updatedName).url(updatedUrl).description(updatedDesc).build();
 
         //when
         blogService.updateBlog(updateBlogDTO);
@@ -63,4 +63,5 @@ public class BlogServiceTest {
         assertEquals(blog.getDescription(), updatedDesc);
         System.out.println(blog);
     }
+
 }

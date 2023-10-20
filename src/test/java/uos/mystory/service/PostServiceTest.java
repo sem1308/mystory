@@ -1,56 +1,47 @@
 package uos.mystory.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import uos.mystory.domain.Blog;
 import uos.mystory.domain.Category;
 import uos.mystory.domain.Post;
-import uos.mystory.domain.User;
 import uos.mystory.domain.enums.OpenState;
 import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
-import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
-import uos.mystory.dto.mapping.insert.InsertUserDTO;
+import uos.mystory.dto.mapping.update.UpdatePostDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class PostServiceTest {
+class PostServiceTest extends CategoryServiceTest{
     @Autowired
-    private PostService postService;
-    @Autowired
-    private BlogService blogService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CategoryService categoryService;
+    protected PostService postService;
 
-    private User user;
-    private Blog blog;
-    private Category category;
+    protected Category category;
 
     @BeforeEach
     public void setup() {
-        Long userId = userService.saveUser(new InsertUserDTO("sem1308", "1308", "ddory", "01000000000"));
-        this.user = userService.getUser(userId);
-        Long blogId = blogService.saveBlog(new InsertBlogDTO("Dev", "https://han-dev.mystory.com", "기본 블로그", user));
-        this.blog = blogService.getBlog(blogId);
-        Long categoryId = categoryService.saveCategory(new InsertCategoryDTO("BackEnd", blog));
+        super.setup();
+        Long categoryId = categoryService.saveCategory(InsertCategoryDTO.builder().name("BackEnd").blog(blog).build());
         this.category = categoryService.getCategory(categoryId);
     }
 
+    @Disabled("상속된 메서드는 실행하지 않습니다.")
+    public void 카테고리_생성() {}
+
     @Test
-    public void 게시글_생성() throws Exception {
+    protected void 게시글_생성() throws Exception {
         //given
         String title = "첫 게시글";
         String url = blog.getUrl()+"/"+title.replace(" ", "-");
-        InsertPostDTO postDTO = new InsertPostDTO(PostType.POST, title, "그냥 끄적이는 글", WriteType.BASIC, OpenState.CLOSE, url, null, user, category, blog);
+        InsertPostDTO postDTO = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
 
         //when
         Long id = postService.savePost(postDTO);
@@ -59,8 +50,37 @@ class PostServiceTest {
         //then
         assertEquals(post.getId(),id);
         System.out.println(post);
-        //test
     }
 
+    @Test
+    protected void 게시글_변경() throws Exception {
+        //given
+        String title = "첫 게시글";
+        String url = blog.getUrl()+"/"+title.replace(" ", "-");
+        PostType postType = PostType.POST;
+        WriteType writeType = WriteType.BASIC;
+        OpenState openState = OpenState.CLOSE;
+        InsertPostDTO postDTO = InsertPostDTO.builder().postType(postType).writeType(writeType).openState(openState)
+                .title(title).content("그냥 끄적이는 글").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+        Long id = postService.savePost(postDTO);
+
+        //when
+        String updatedTitle = "첫 게시글 (수정)";
+        String updatedContent = "아무 내용";
+        WriteType updatedWriteType = WriteType.BASIC;
+        OpenState updatedOpenState = OpenState.CLOSE;
+        UpdatePostDTO updatePostDTO = UpdatePostDTO.builder().id(id).title(updatedTitle).content(updatedContent)
+                .writeType(updatedWriteType).openState(updatedOpenState).titleImgPath(null).category(null).build();
+
+        postService.updatePost(updatePostDTO);
+
+        //then
+        Post updatedPost = postService.getPost(id);
+        assertEquals(updatedPost.getTitle(),updatedTitle);
+        assertEquals(updatedPost.getContent(),updatedContent);
+        assertEquals(updatedPost.getWriteType(),updatedWriteType);
+        assertEquals(updatedPost.getOpenState(),updatedOpenState);
+        System.out.println(updatedPost);
+    }
 
 }

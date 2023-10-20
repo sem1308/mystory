@@ -20,21 +20,20 @@ import uos.mystory.repository.UserRepository;
 @RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepository;
-    private final UserRepository userRepository;
 
     /**
-     * @param blogDTO
-     * @return 블로그 번호
      * @title 블로그 생성
+     * @param insertBlogDTO
+     * @return 블로그 번호
      */
-    public Long saveBlog(@NotNull InsertBlogDTO blogDTO) {
+    public Long saveBlog(@NotNull InsertBlogDTO insertBlogDTO) {
         // url 중복 체크
-        validateUrlDuplication(blogDTO.getUrl());
+        validateUrlDuplication(insertBlogDTO.getUrl());
         // 유저 최대 블로그 개수 체크
-        validateNumBlogExceeded(blogDTO.getUser());
+        validateNumBlogExceeded(insertBlogDTO.getUser());
 
         // entity 생성
-        Blog blog = Blog.create(blogDTO.getName(), blogDTO.getUrl(), blogDTO.getDescription(), blogDTO.getUser());
+        Blog blog = Blog.create(insertBlogDTO);
 
         return blogRepository.save(blog).getId();
     }
@@ -53,28 +52,30 @@ public class BlogService {
     }
 
     /**
-     * @param blogDTO
-     * @return
      * @title 블로그 정보 변경
+     * @param updateBlogDTO
+     * @return
      */
-    public void updateBlog(@NotNull UpdateBlogDTO blogDTO) {
-        Blog blog = getBlog(blogDTO.getId());
-        blog.update(blogDTO.getName(), blogDTO.getUrl(), blogDTO.getDescription());
+    public void updateBlog(@NotNull UpdateBlogDTO updateBlogDTO) {
+        Blog blog = getBlog(updateBlogDTO.getId());
+        blog.update(updateBlogDTO);
     }
 
     /**
+     * @title 블로그 번호로 블로그 엔티티 가져오기
      * @param id
      * @return 블로그 엔티티
-     * @title 블로그 번호로 블로그 엔티티 가져오기
      */
     public Blog getBlog(Long id) {
-        return blogRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.blog")));
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.blog")));
+        blog.addVisits();
+        return blog;
     }
 
     /**
+     * @title 블로그 엔티티 목록 가져오기
      * @param pageable
      * @return 블로그 엔티티 페이징 리스트
-     * @title 블로그 엔티티 목록 가져오기
      */
     public Page<Blog> getBlogs(Pageable pageable) {
         return blogRepository.findAll(pageable);

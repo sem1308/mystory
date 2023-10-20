@@ -2,9 +2,15 @@ package uos.mystory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import uos.mystory.domain.enums.UserRole;
+import uos.mystory.dto.mapping.insert.InsertUserDTO;
+import uos.mystory.dto.mapping.update.UpdateUserDTO;
+import uos.mystory.exception.MismatchException;
+import uos.mystory.exception.massage.MessageManager;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity(name = "users") // user가 DB에서 예약어인 경우가 있어 users로 table 이름 변경
 @Getter
@@ -37,18 +43,36 @@ public class User {
     private LocalDateTime createdDateTime;
 
     //==생성 메소드==//
-    public static User create(String userId, String userPw, String nickname, String phoneNum){
-        return new UserBuilder().userId(userId).userPw(userPw).nickname(nickname).phoneNum(phoneNum)
+    public static User create(InsertUserDTO insertUserDTO){
+        return new UserBuilder().userId(insertUserDTO.getUserId()).userPw(insertUserDTO.getUserPw())
+                .nickname(insertUserDTO.getNickname()).phoneNum(insertUserDTO.getPhoneNum())
                 .role(UserRole.M).maxNumBlog(5).createdDateTime(LocalDateTime.now()).build();
     }
 
     //==변경 메소드==//
-    public void update(String userPw, String nickname, String phoneNum){
-        this.userPw = userPw == null ? this.userPw : userPw;
-        this.nickname = nickname == null ? this.nickname : nickname;
-        this.phoneNum = phoneNum == null ? this.phoneNum : phoneNum;
+    public void update(UpdateUserDTO updateUserDTO){
+        this.userPw = Optional.ofNullable(updateUserDTO.getUserPw()).orElse(this.userPw);
+        this.nickname = Optional.ofNullable(updateUserDTO.getNickname()).orElse(this.nickname);
+        this.phoneNum = Optional.ofNullable(updateUserDTO.getPhoneNum()).orElse(this.phoneNum);
     }
 
+    //==비즈니스 로직==//
+
+    /**
+     * 비밀번호 암호화
+     */
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        this.userPw = passwordEncoder.encode(this.userPw);
+    }
+
+    /**
+     * 비밀번호 일치 확인
+     */
+    public void validatePassword(PasswordEncoder passwordEncoder, String inputPw) {
+        if(!passwordEncoder.matches(inputPw,userPw)){
+            throw new MismatchException(MessageManager.getMessage("error.mismatch.user.user_pw"));
+        }
+    }
 
     public String toString() {
         return "[userId] : "+userId+", [userPw] : "+userPw+", [nickname] : "+nickname+", [role] : "+role;

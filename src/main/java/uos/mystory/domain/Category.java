@@ -2,8 +2,13 @@ package uos.mystory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.persister.entity.mutation.UpdateValuesAnalysis;
+import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
+import uos.mystory.dto.mapping.update.UpdateCategoryDTO;
+import uos.mystory.dto.mapping.update.UpdateCommentDTO;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -26,13 +31,13 @@ public class Category {
     private Blog blog;
 
     //==생성 메소드==//
-    public static Category create(String name, Blog blog){
-        return new CategoryBuilder().name(name).blog(blog).build();
+    public static Category create(InsertCategoryDTO categoryDTO){
+        return new CategoryBuilder().name(categoryDTO.getName()).blog(categoryDTO.getBlog()).build();
     }
 
     //==변경 메소드==//
-    public void update(String name){
-        this.name = name == null ? this.name : name;
+    public void update(UpdateCategoryDTO updateCategoryDTO){
+        this.name = Optional.ofNullable(updateCategoryDTO.getName()).orElse(this.name);
     }
 
     public String toString() {
