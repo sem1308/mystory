@@ -1,6 +1,5 @@
 package uos.mystory.dto.mapping.insert;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import uos.mystory.domain.Blog;
