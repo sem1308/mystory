@@ -1,6 +1,7 @@
 package uos.mystory.service;
 
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import uos.mystory.domain.Comment;
 import uos.mystory.dto.mapping.insert.InsertCommentDTO;
@@ -19,7 +20,7 @@ public class CommentService {
      * @param insertCommentDTO
      * @return 댓글 번호
      */
-    public Long saveComment(InsertCommentDTO insertCommentDTO) {
+    public Long saveComment(@NotNull InsertCommentDTO insertCommentDTO) {
         Comment comment = Comment.create(insertCommentDTO);
         return commentRepository.save(comment).getId();
     }
@@ -28,7 +29,7 @@ public class CommentService {
      * @Title 댓글 정보 수정하기
      * @param updateCommentDTO
      */
-    public void updateComment(UpdateCommentDTO updateCommentDTO) {
+    public void updateComment(@NotNull UpdateCommentDTO updateCommentDTO) {
         Comment comment = getComment(updateCommentDTO.getId());
         comment.update(updateCommentDTO);
     }

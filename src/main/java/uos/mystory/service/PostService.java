@@ -35,7 +35,7 @@ public class PostService {
         return postRepository.save(post).getId();
     }
 
-    private void validateBlogOwner(Blog blog, User user) {
+    private void validateBlogOwner(@NotNull Blog blog,@NotNull User user) {
         if (!blog.getUser().equals(user)) {
             throw new MismatchException(MessageManager.getMessage("error.mismatch.blog.user"));
         }
