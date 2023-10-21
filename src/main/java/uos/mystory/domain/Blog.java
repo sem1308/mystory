@@ -18,10 +18,10 @@ public class Blog {
     @Column(name = "blog_id")
     private Long id;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 2000, unique = true)
+    @Column(length = 2000, unique = true, nullable = false)
     private String url;
 
     @Column(length = 500)
@@ -34,7 +34,7 @@ public class Blog {
      * 연관 관계 매핑
      */
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     //==생성 메소드==//

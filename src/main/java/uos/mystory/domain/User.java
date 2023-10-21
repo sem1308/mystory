@@ -22,22 +22,23 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "id", length = 100, unique = true)
+    @Column(name = "id", length = 100, unique = true, nullable = false)
     private String userId;
 
-    @Column(name = "pw", length = 500)
+    @Column(name = "pw", length = 500, nullable = false)
     private String userPw;
 
-    @Column(length = 100, unique = true)
+    @Column(length = 100, unique = true, nullable = false)
     private String nickname;
 
-    @Column(length = 11, unique = true)
+    @Column(length = 11, unique = true, nullable = false)
     private String phoneNum;
 
     @Column(columnDefinition = "TINYINT default 5")
     private Integer maxNumBlog;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;
 
     private LocalDateTime createdDateTime;

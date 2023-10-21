@@ -8,6 +8,7 @@ import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
+import uos.mystory.utils.Validator;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,21 +24,24 @@ public class Post {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PostType postType;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private WriteType writeType;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OpenState openState;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String title;
 
     @Column(columnDefinition = "TEXT") // mysql의 TEXT 변수 타입 선언을 위함
     private String content;
 
-    @Column(length = 2000, unique = true)
+    @Column(length = 2000, unique = true, nullable = false)
     private String url;
 
     @Column(length = 500)
@@ -55,7 +59,7 @@ public class Post {
      * 연관 관계 매핑
      */
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToOne
@@ -63,12 +67,15 @@ public class Post {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "blog_id")
+    @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
 
 
     //==생성 메소드==//
     public static Post create(InsertPostDTO insertPostDTO){
+        // 연관 객체가 null인지 검사
+        Validator.validateNull(insertPostDTO.getUser(),insertPostDTO.getBlog());
+
         return new PostBuilder().postType(insertPostDTO.getPostType()).title(insertPostDTO.getTitle()).content(insertPostDTO.getContent()).writeType(insertPostDTO.getWriteType())
                 .openState(insertPostDTO.getOpenState()).url(insertPostDTO.getUrl()).titleImgPath(insertPostDTO.getTitleImgPath()).hearts(0).visits(0)
                 .createdDateTime(LocalDateTime.now()).user(insertPostDTO.getUser()).category(insertPostDTO.getCategory()).blog(insertPostDTO.getBlog()).build();

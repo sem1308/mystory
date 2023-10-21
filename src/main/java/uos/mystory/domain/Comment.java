@@ -30,7 +30,7 @@ public class Comment {
      * 연관 관계 매핑
      */
     @ManyToOne
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     //==생성 메소드==//
