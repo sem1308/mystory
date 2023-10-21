@@ -2,9 +2,13 @@ package uos.mystory.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import uos.mystory.domain.enums.UserRole;
+import org.jetbrains.annotations.NotNull;
+import uos.mystory.dto.mapping.insert.InsertGuestBookDTO;
+import uos.mystory.dto.mapping.update.UpdateGuestBookDTO;
+import uos.mystory.utils.Validator;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -26,16 +30,21 @@ public class GuestBook {
      * 연관 관계 매핑
      */
     @ManyToOne
-    @JoinColumn(name = "blog_id")
+    @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
 
     //==생성 메소드==//
-    public static GuestBook create(String content, Blog blog){
-        return new GuestBookBuilder().content(content).createdDateTime(LocalDateTime.now()).blog(blog).build();
+    public static GuestBook create(@NotNull InsertGuestBookDTO insertGuestBookDTO){
+        Validator.validateNull(insertGuestBookDTO.getBlog());
+        return new GuestBookBuilder().content(insertGuestBookDTO.getContent()).createdDateTime(LocalDateTime.now()).blog(insertGuestBookDTO.getBlog()).build();
     }
 
     //==변경 메소드==//
-    public void update(String content){
-        this.content = content == null ? this.content : content;
+    public void update(@NotNull UpdateGuestBookDTO updateGuestBookDTO){
+        this.content = Optional.ofNullable(updateGuestBookDTO.getContent()).orElse(this.content);
+    }
+
+    public String toString() {
+        return "[content] : "+content+", [blog] : " + blog.getName();
     }
 }
