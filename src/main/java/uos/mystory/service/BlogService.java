@@ -9,12 +9,13 @@ import uos.mystory.domain.Blog;
 import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
+import uos.mystory.dto.response.BlogInfoDTO;
 import uos.mystory.exception.DuplicateException;
 import uos.mystory.exception.LimitExceededException;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.BlogRepository;
-import uos.mystory.repository.UserRepository;
+import uos.mystory.repository.condition.BlogSearchCondition;
 
 @Service
 @RequiredArgsConstructor
@@ -77,8 +78,13 @@ public class BlogService {
      * @param pageable
      * @return 블로그 엔티티 페이징 리스트
      */
+    //TODO: Blog to BlogInfoDTO 교체
     public Page<Blog> getBlogs(Pageable pageable) {
         return blogRepository.findAll(pageable);
+    }
+
+    public Page<BlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition, Pageable pageable) {
+        return blogRepository.findAll(blogSearchCondition, pageable);
     }
 
 }
