@@ -99,21 +99,29 @@ public class BlogServiceTest {
         orders.add(Sort.Order.desc("name"));
         Sort sort = Sort.by(orders);
         Pageable pageable = PageRequest.of(page, size,sort);
-        BlogSearchCondition condition = new BlogSearchCondition(null);
+        BlogSearchCondition condition = new BlogSearchCondition(user.getId());
+        BlogSearchCondition condition2 = new BlogSearchCondition(user.getId()+1);
 
         int expectedTotalElements = 3;
         int expectedTotalPages = (int) Math.ceil((double) expectedTotalElements / size);
         //when
+        // 이름이 다른 blog 3개 생성
         for (int i = 0; i < expectedTotalElements; i++) {
             int number = (3 - i);
             InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev"+number).url("https://dev"+number+".mystory.com").description("기본 블로그").user(user).build();
             blogService.saveBlog(insertBlogDTO);
         }
         Page<BlogInfoDTO> blogInfoDTOS = blogService.getBlogsByContidion(condition,pageable);
+        Page<BlogInfoDTO> blogInfoDTOS2 = blogService.getBlogsByContidion(condition2,pageable);
 
         //then
         blogInfoDTOS.getContent().forEach(System.out::println);
+
+        // expectedTotalPages, expectedTotalElements 맞는지 확인
         assertEquals(expectedTotalPages, blogInfoDTOS.getTotalPages());
         assertEquals(expectedTotalElements, blogInfoDTOS.getTotalElements());
+
+        // condition2에 해당하는 user가 없어야 함
+        assertEquals(0,blogInfoDTOS2.getTotalElements());
     }
 }
