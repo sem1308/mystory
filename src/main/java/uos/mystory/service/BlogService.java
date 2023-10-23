@@ -16,11 +16,13 @@ import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.BlogRepository;
 import uos.mystory.repository.condition.BlogSearchCondition;
+import uos.mystory.repository.querydsl.BlogQueryRepository;
 
 @Service
 @RequiredArgsConstructor
 public class BlogService {
     private final BlogRepository blogRepository;
+    private final BlogQueryRepository blogQueryRepository;
 
     /**
      * @title 블로그 생성
@@ -84,7 +86,7 @@ public class BlogService {
     }
 
     public Page<BlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition, Pageable pageable) {
-        return blogRepository.findAll(blogSearchCondition, pageable);
+        return blogQueryRepository.findAll(blogSearchCondition, pageable);
     }
 
 }

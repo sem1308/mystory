@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.User;
@@ -17,9 +18,11 @@ import uos.mystory.dto.response.BlogInfoDTO;
 import uos.mystory.exception.DuplicateException;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
-import java.util.concurrent.locks.Condition;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -91,24 +94,26 @@ public class BlogServiceTest {
     public void 유저가_가진_블로그_목록_가져오기() throws Exception {
         //given
         int page = 0;
-        int size = 5;
-        Pageable pageable = PageRequest.of(page, size);
-        BlogSearchCondition condition = new BlogSearchCondition(user.getId());
+        int size = 2;
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(Sort.Order.desc("name"));
+        Sort sort = Sort.by(orders);
+        Pageable pageable = PageRequest.of(page, size,sort);
+        BlogSearchCondition condition = new BlogSearchCondition(null);
 
-        InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev").url("https://dev.mystory.com").description("기본 블로그").user(user).build();
-        InsertBlogDTO insertBlogDTO2 = InsertBlogDTO.builder().name("Dev2").url("https://dev2.mystory.com").description("기본 블로그2").user(user).build();
-        InsertBlogDTO insertBlogDTO3 = InsertBlogDTO.builder().name("Dev3").url("https://dev3.mystory.com").description("기본 블로그3").user(user).build();
-
+        int totalElements = 3;
+        int expectedTotalPages = (int) Math.ceil((double) totalElements / size);
         //when
-        blogService.saveBlog(insertBlogDTO);
-        blogService.saveBlog(insertBlogDTO2);
-        blogService.saveBlog(insertBlogDTO3);
-
-        //then
+        for (int i = 0; i < totalElements; i++) {
+            int number = (3 - i);
+            InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev"+number).url("https://dev"+number+".mystory.com").description("기본 블로그").user(user).build();
+            blogService.saveBlog(insertBlogDTO);
+        }
         Page<BlogInfoDTO> blogInfoDTOS = blogService.getBlogsByContidion(condition,pageable);
 
-        assertEquals(blogInfoDTOS.getTotalPages(),1);
-        assertEquals(blogInfoDTOS.getTotalElements(),3);
+        //then
         blogInfoDTOS.getContent().forEach(System.out::println);
+        assertEquals(expectedTotalPages, blogInfoDTOS.getTotalPages());
+        assertEquals(totalElements, blogInfoDTOS.getTotalElements());
     }
 }
