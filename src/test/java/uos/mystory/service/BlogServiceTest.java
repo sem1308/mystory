@@ -4,12 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
+import uos.mystory.dto.response.BlogInfoDTO;
+import uos.mystory.exception.DuplicateException;
+import uos.mystory.repository.condition.BlogSearchCondition;
+
+import java.util.concurrent.locks.Condition;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,4 +72,43 @@ public class BlogServiceTest {
         System.out.println(blog);
     }
 
+    @Test
+    public void 블로그_중복_url_검사() throws Exception {
+        //given
+        InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build();
+        InsertBlogDTO insertBlogDTO2 = InsertBlogDTO.builder().name("Dev2").url("https://han-dev.mystory.com").description("기본 블로그2").user(user).build();
+
+        //when
+        blogService.saveBlog(insertBlogDTO);
+
+        //then
+        assertThrows(DuplicateException.class, () ->
+            blogService.saveBlog(insertBlogDTO2)
+        );
+    }
+
+    @Test
+    public void 유저가_가진_블로그_목록_가져오기() throws Exception {
+        //given
+        int page = 0;
+        int size = 5;
+        Pageable pageable = PageRequest.of(page, size);
+        BlogSearchCondition condition = new BlogSearchCondition(user.getId());
+
+        InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev").url("https://dev.mystory.com").description("기본 블로그").user(user).build();
+        InsertBlogDTO insertBlogDTO2 = InsertBlogDTO.builder().name("Dev2").url("https://dev2.mystory.com").description("기본 블로그2").user(user).build();
+        InsertBlogDTO insertBlogDTO3 = InsertBlogDTO.builder().name("Dev3").url("https://dev3.mystory.com").description("기본 블로그3").user(user).build();
+
+        //when
+        blogService.saveBlog(insertBlogDTO);
+        blogService.saveBlog(insertBlogDTO2);
+        blogService.saveBlog(insertBlogDTO3);
+
+        //then
+        Page<BlogInfoDTO> blogInfoDTOS = blogService.getBlogsByContidion(condition,pageable);
+
+        assertEquals(blogInfoDTOS.getTotalPages(),1);
+        assertEquals(blogInfoDTOS.getTotalElements(),3);
+        blogInfoDTOS.getContent().forEach(System.out::println);
+    }
 }
