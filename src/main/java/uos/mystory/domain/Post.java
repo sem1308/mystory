@@ -3,12 +3,13 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.util.Assert;
 import uos.mystory.domain.enums.OpenState;
 import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
-import uos.mystory.utils.Validator;
+import uos.mystory.exception.massage.MessageManager;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -74,7 +75,8 @@ public class Post {
     //==생성 메소드==//
     public static Post create(InsertPostDTO insertPostDTO){
         // 연관 객체가 null인지 검사
-        Validator.validateNull(insertPostDTO.getUser(),insertPostDTO.getBlog());
+        Assert.notNull(insertPostDTO.getUser(), MessageManager.getMessage("error.null",User.class));
+        Assert.notNull(insertPostDTO.getBlog(), MessageManager.getMessage("error.null",Blog.class));
 
         return new PostBuilder().postType(insertPostDTO.getPostType()).title(insertPostDTO.getTitle()).content(insertPostDTO.getContent()).writeType(insertPostDTO.getWriteType())
                 .openState(insertPostDTO.getOpenState()).url(insertPostDTO.getUrl()).titleImgPath(insertPostDTO.getTitleImgPath()).hearts(0).visits(0)

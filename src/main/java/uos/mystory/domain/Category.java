@@ -3,11 +3,11 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.util.Assert;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.update.UpdateCategoryDTO;
-import uos.mystory.utils.Validator;
+import uos.mystory.exception.massage.MessageManager;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Entity
@@ -31,10 +31,11 @@ public class Category {
     private Blog blog;
 
     //==생성 메소드==//
-    public static Category create(@NotNull InsertCategoryDTO categoryDTO){
+    public static Category create(@NotNull InsertCategoryDTO insertCategoryDTO){
         // 연관 객체가 null인지 검사
-        Validator.validateNull(categoryDTO.getBlog());
-        return new CategoryBuilder().name(categoryDTO.getName()).blog(categoryDTO.getBlog()).build();
+        Assert.notNull(insertCategoryDTO.getBlog(), MessageManager.getMessage("error.null",Blog.class));
+
+        return new CategoryBuilder().name(insertCategoryDTO.getName()).blog(insertCategoryDTO.getBlog()).build();
     }
 
     //==변경 메소드==//

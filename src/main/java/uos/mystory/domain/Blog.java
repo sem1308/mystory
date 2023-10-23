@@ -3,8 +3,10 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.util.Assert;
 import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
+import uos.mystory.exception.massage.MessageManager;
 
 import java.util.Optional;
 
@@ -39,6 +41,8 @@ public class Blog {
 
     //==생성 메소드==//
     public static Blog create(InsertBlogDTO insertBlogDTO){
+        Assert.notNull(insertBlogDTO.getUser(), MessageManager.getMessage("error.null",User.class));
+
         return new BlogBuilder().name(insertBlogDTO.getName()).url(insertBlogDTO.getUrl())
                 .description(insertBlogDTO.getDescription()).visits(0).user(insertBlogDTO.getUser()).build();
     }

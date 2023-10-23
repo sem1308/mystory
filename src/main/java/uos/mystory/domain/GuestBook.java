@@ -3,9 +3,10 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.util.Assert;
 import uos.mystory.dto.mapping.insert.InsertGuestBookDTO;
 import uos.mystory.dto.mapping.update.UpdateGuestBookDTO;
-import uos.mystory.utils.Validator;
+import uos.mystory.exception.massage.MessageManager;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -35,7 +36,8 @@ public class GuestBook {
 
     //==생성 메소드==//
     public static GuestBook create(@NotNull InsertGuestBookDTO insertGuestBookDTO){
-        Validator.validateNull(insertGuestBookDTO.getBlog());
+        Assert.notNull(insertGuestBookDTO.getBlog(), MessageManager.getMessage("error.null",Blog.class));
+
         return new GuestBookBuilder().content(insertGuestBookDTO.getContent()).createdDateTime(LocalDateTime.now()).blog(insertGuestBookDTO.getBlog()).build();
     }
 

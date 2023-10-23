@@ -3,8 +3,10 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.util.Assert;
 import uos.mystory.dto.mapping.insert.InsertCommentDTO;
 import uos.mystory.dto.mapping.update.UpdateCommentDTO;
+import uos.mystory.exception.massage.MessageManager;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -35,6 +37,8 @@ public class Comment {
 
     //==생성 메소드==//
     public static Comment create(@NotNull InsertCommentDTO insertCommentDTO){
+        Assert.notNull(insertCommentDTO.getPost(), MessageManager.getMessage("error.null",Post.class));
+
         return new CommentBuilder().content(insertCommentDTO.getContent()).createdDateTime(LocalDateTime.now()).post(insertCommentDTO.getPost()).build();
     }
 
