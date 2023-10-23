@@ -101,10 +101,10 @@ public class BlogServiceTest {
         Pageable pageable = PageRequest.of(page, size,sort);
         BlogSearchCondition condition = new BlogSearchCondition(null);
 
-        int totalElements = 3;
-        int expectedTotalPages = (int) Math.ceil((double) totalElements / size);
+        int expectedTotalElements = 3;
+        int expectedTotalPages = (int) Math.ceil((double) expectedTotalElements / size);
         //when
-        for (int i = 0; i < totalElements; i++) {
+        for (int i = 0; i < expectedTotalElements; i++) {
             int number = (3 - i);
             InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev"+number).url("https://dev"+number+".mystory.com").description("기본 블로그").user(user).build();
             blogService.saveBlog(insertBlogDTO);
@@ -114,6 +114,6 @@ public class BlogServiceTest {
         //then
         blogInfoDTOS.getContent().forEach(System.out::println);
         assertEquals(expectedTotalPages, blogInfoDTOS.getTotalPages());
-        assertEquals(totalElements, blogInfoDTOS.getTotalElements());
+        assertEquals(expectedTotalElements, blogInfoDTOS.getTotalElements());
     }
 }
