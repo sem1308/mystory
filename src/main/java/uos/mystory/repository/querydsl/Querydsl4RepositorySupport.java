@@ -14,13 +14,11 @@ import org.springframework.data.jpa.repository.support.JpaEntityInformationSuppo
 import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.function.Function;
 
-@Repository
 public abstract class Querydsl4RepositorySupport {
     private final Class domainClass;
     private Querydsl querydsl;
@@ -67,21 +65,14 @@ public abstract class Querydsl4RepositorySupport {
     protected <T> Page<T> applyPagination(Pageable pageable, Function<JPAQueryFactory, JPAQuery> contentQuery, Function<JPAQueryFactory,JPAQuery> countQuery) {
         JPAQuery jpaContentQuery = contentQuery.apply(getQueryFactory());
         List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
-        JPAQuery countResultQuery = countQuery.apply(getQueryFactory());
-        List countResult = countResultQuery.fetch();
+        JPAQuery<Long> countResultQuery = countQuery.apply(getQueryFactory());
 
-        return PageableExecutionUtils.getPage(content, pageable, countResult::size);
+        return PageableExecutionUtils.getPage(content, pageable, countResultQuery::fetchOne);
     }
 
     //== 보통 paging시 contentQuery와 countQuery의 기본 조건이 같기에 이러한 조건을 중복해서 쓰는 것을 피하기 위한 함수 ==//
-    protected <T> Page<T> applyPaginationByCommonQuery(Pageable pageable, Function<JPAQueryFactory, JPAQuery> contentQuery,
-                                                           Function<JPAQueryFactory,JPAQuery> countQuery, Function<JPAQuery, JPAQuery> commonQuery) {
-        JPAQuery jpaContentQuery = contentQuery.apply(getQueryFactory());
-        jpaContentQuery = commonQuery.apply(jpaContentQuery); // 공통 조건 쿼리 추가
-        List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
-        JPAQuery<Long> countResultQuery = countQuery.apply(getQueryFactory());
-        countResultQuery = commonQuery.apply(countResultQuery); // 공통 조건 쿼리 추가
-
-        return PageableExecutionUtils.getPage(content, pageable, countResultQuery::fetchOne);
+    protected <T> Page<T> applyPagination(Pageable pageable, Function<JPAQueryFactory, JPAQuery> contentQuery,
+                                          Function<JPAQueryFactory,JPAQuery> countQuery, Function<JPAQuery, JPAQuery> commonQuery) {
+        return applyPagination(pageable, contentQuery.andThen(commonQuery), countQuery.andThen(commonQuery));
     }
 }
