@@ -62,17 +62,35 @@ public abstract class Querydsl4RepositorySupport {
         return getQueryFactory().selectFrom(from);
     }
 
-    protected <T> Page<T> applyPagination(Pageable pageable, Function<JPAQueryFactory, JPAQuery> contentQuery, Function<JPAQueryFactory,JPAQuery> countQuery) {
-        JPAQuery jpaContentQuery = contentQuery.apply(getQueryFactory());
+    protected JPAQuery<?> from(EntityPath<?> from) {
+        return getQuerydsl().createQuery().from(from);
+    }
+
+    /*
+        contentQuery : pagination, sort 적용할 쿼리
+        countQuery : contentQuery에서 pagination, sort 을 빼고 count를 사용한 쿼리
+
+        countQuery가 없다면 totalPages나 totalElements같은 것을 얻을 수가 없음
+        (contentQuery는 pagination이 적용되었으므로 한 page에 대한 정보만 얻기 때문)
+    */
+    protected <T> Page<T> applyPagination(Pageable pageable, Function<JPAQueryFactory, JPAQuery<T>> contentQuery, Function<JPAQueryFactory,JPAQuery<Long>> countQuery) {
+        JPAQuery<T> jpaContentQuery = contentQuery.apply(getQueryFactory());
         List<T> content = getQuerydsl().applyPagination(pageable, jpaContentQuery).fetch();
         JPAQuery<Long> countResultQuery = countQuery.apply(getQueryFactory());
 
         return PageableExecutionUtils.getPage(content, pageable, countResultQuery::fetchOne);
     }
 
-    //== 보통 paging시 contentQuery와 countQuery의 기본 조건이 같기에 이러한 조건을 중복해서 쓰는 것을 피하기 위한 함수 ==//
-    protected <T> Page<T> applyPagination(Pageable pageable, Function<JPAQueryFactory, JPAQuery> contentQuery,
-                                          Function<JPAQueryFactory,JPAQuery> countQuery, Function<JPAQuery, JPAQuery> commonQuery) {
-        return applyPagination(pageable, contentQuery.andThen(commonQuery), countQuery.andThen(commonQuery));
+    //== 함수가 아닌 JPAQuery로만 처리 ==//
+    protected <T> Page<T> applyPagination(Pageable pageable, JPAQuery<T> contentQuery, JPAQuery<Long> countQuery) {
+        List<T> content = getQuerydsl().applyPagination(pageable, contentQuery).fetch();
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    //== JPAQuery가 아닌 Expression으로 처리 ==//
+    protected <T> Page<T> applyPagination(Pageable pageable, Expression<T> contentExpr, Expression<Long> countExpr, JPAQuery<?> baseQuery) {
+        JPAQuery<T> contentQuery = baseQuery.clone().select(contentExpr);
+        JPAQuery<Long> countQuery = baseQuery.clone().select(countExpr);
+        return applyPagination(pageable, contentQuery, countQuery);
     }
 }

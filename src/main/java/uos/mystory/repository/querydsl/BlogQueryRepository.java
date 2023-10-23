@@ -1,7 +1,6 @@
 package uos.mystory.repository.querydsl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,23 +22,21 @@ public class BlogQueryRepository extends Querydsl4RepositorySupport{
 
     public Page<BlogInfoDTO> findAll(@NotNull BlogSearchCondition condition, @NotNull Pageable pageable) {
         return applyPagination(pageable,
-                contentQuery->contentQuery
-                        .select(new QBlogInfoDTO(
-                                blog.id,
-                                blog.name,
-                                blog.url,
-                                blog.description,
-                                blog.visits
-                        ))
-                , countQuery->countQuery
-                        .select(blog.count())
-                , commonQuery->
-                        (JPAQuery) commonQuery
-                        .from(blog)
+                // content expression - select 변수
+                new QBlogInfoDTO(
+                        blog.id,
+                        blog.name,
+                        blog.url,
+                        blog.description,
+                        blog.visits
+                ),
+                // count expression - select 변수
+                blog.count(),
+                // 공통 조건 query
+                from(blog)
                         .where(
                                 userIdEq(condition.userId())
-                        )
-        );
+                        ));
     }
 
     private BooleanExpression userIdEq(Long userId) {
