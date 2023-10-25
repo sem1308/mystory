@@ -1,15 +1,16 @@
 package uos.mystory.domain.history;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import uos.mystory.domain.Blog;
+import uos.mystory.dto.mapping.insert.InsertBlogHistoryDTO;
 
 @Entity
 @Getter
-@Builder(access = AccessLevel.PROTECTED) // 생성로직은 오직 User에서만 할 수 있게
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BlogHistory extends History{
+public class BlogHistory extends History {
     @Id @GeneratedValue
     @AttributeOverride(name = "id", column = @Column(name = "blog_history_id"))
     private Long id;
@@ -18,8 +19,14 @@ public class BlogHistory extends History{
     @JoinColumn(name = "blog_id")
     private Blog blog;
 
+    protected BlogHistory(InsertBlogHistoryDTO insertBlogHistoryDTO){
+        super();
+        this.blog = insertBlogHistoryDTO.getBlog();
+        this.path = insertBlogHistoryDTO.getPath();
+    }
+
     //==생성 메소드==//
-    public static BlogHistory create(Blog blog){
-        return new BlogHistoryBuilder().blog(blog).build();
+    public static BlogHistory create(InsertBlogHistoryDTO insertBlogHistoryDTO){
+        return new BlogHistory(insertBlogHistoryDTO);
     }
 }

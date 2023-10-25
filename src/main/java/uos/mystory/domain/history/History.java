@@ -3,8 +3,9 @@ package uos.mystory.domain.history;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
+import uos.mystory.domain.enums.VisitedPath;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -14,7 +15,11 @@ public abstract class History {
     private Long id;
 
     @ColumnDefault("0")
-    protected Integer visits;
+    protected VisitedPath path;
 
-    protected LocalDateTime createdDateTime;
+    protected LocalDate createdDate;
+
+    protected History(){
+        this.createdDate = LocalDate.now();
+    }
 }
