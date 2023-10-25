@@ -14,7 +14,7 @@ import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
-import uos.mystory.dto.response.BlogInfoDTO;
+import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.exception.DuplicateException;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
@@ -111,8 +111,8 @@ public class BlogServiceTest {
             InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev"+number).url("https://dev"+number+".mystory.com").description("기본 블로그").user(user).build();
             blogService.saveBlog(insertBlogDTO);
         }
-        Page<BlogInfoDTO> blogInfoDTOS = blogService.getBlogsByContidion(condition,pageable);
-        Page<BlogInfoDTO> blogInfoDTOS2 = blogService.getBlogsByContidion(condition2,pageable);
+        Page<SelectBlogInfoDTO> blogInfoDTOS = blogService.getBlogsByContidion(condition,pageable);
+        Page<SelectBlogInfoDTO> blogInfoDTOS2 = blogService.getBlogsByContidion(condition2,pageable);
 
         //then
         blogInfoDTOS.getContent().forEach(System.out::println);

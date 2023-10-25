@@ -1,10 +1,10 @@
-package uos.mystory.repository.querydsl;
+package uos.mystory.repository.querydsl.regacy;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import uos.mystory.dto.response.BlogInfoDTO;
+import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
 public interface BlogRepositoryCostom {
-    Page<BlogInfoDTO> findAll(BlogSearchCondition condition, Pageable pageable);
+    Page<SelectBlogInfoDTO> findAll(BlogSearchCondition condition, Pageable pageable);
 }

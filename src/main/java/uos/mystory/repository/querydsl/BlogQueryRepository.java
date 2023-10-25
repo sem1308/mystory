@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.QUser;
-import uos.mystory.dto.response.BlogInfoDTO;
-import uos.mystory.dto.response.QBlogInfoDTO;
+import uos.mystory.dto.mapping.select.QSelectBlogInfoDTO;
+import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
 import static uos.mystory.domain.QBlog.blog;
@@ -20,10 +20,10 @@ public class BlogQueryRepository extends Querydsl4RepositorySupport{
         super(Blog.class);
     }
 
-    public Page<BlogInfoDTO> findAll(@NotNull BlogSearchCondition condition, @NotNull Pageable pageable) {
+    public Page<SelectBlogInfoDTO> findAll(@NotNull BlogSearchCondition condition, @NotNull Pageable pageable) {
         return applyPagination(pageable,
                 // content expression - select 변수
-                new QBlogInfoDTO(
+                new QSelectBlogInfoDTO(
                         blog.id,
                         blog.name,
                         blog.url,

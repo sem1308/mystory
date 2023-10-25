@@ -1,4 +1,4 @@
-package uos.mystory.repository.querydsl;
+package uos.mystory.repository.querydsl.regacy;
 
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -14,24 +14,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import uos.mystory.domain.Blog;
-import uos.mystory.domain.QBlog;
 import uos.mystory.domain.QUser;
-import uos.mystory.dto.response.BlogInfoDTO;
-import uos.mystory.dto.response.QBlogInfoDTO;
+import uos.mystory.dto.mapping.select.QSelectBlogInfoDTO;
+import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static uos.mystory.domain.QBlog.blog;
+
 @Repository
 @RequiredArgsConstructor
 public class BlogRepositoryCostomImpl implements BlogRepositoryCostom {
     private final JPAQueryFactory queryFactory; // 물론 이를 위해서는 빈으로 등록을 해줘야 한다.
-    private final QBlog blog = QBlog.blog;
 
-    public Page<BlogInfoDTO> findAll(@NotNull BlogSearchCondition condition, @NotNull Pageable pageable) {
-        JPAQuery<BlogInfoDTO> query = queryFactory
-                .select(new QBlogInfoDTO(
+    public Page<SelectBlogInfoDTO> findAll(@NotNull BlogSearchCondition condition, @NotNull Pageable pageable) {
+        JPAQuery<SelectBlogInfoDTO> query = queryFactory
+                .select(new QSelectBlogInfoDTO(
                         blog.id,
                         blog.name,
                         blog.url,
@@ -46,7 +46,7 @@ public class BlogRepositoryCostomImpl implements BlogRepositoryCostom {
                 .limit(pageable.getPageSize())
                 .orderBy(getAllOrderSpecifiers(pageable.getSort()));
 
-        List<BlogInfoDTO> content = query.fetch();
+        List<SelectBlogInfoDTO> content = query.fetch();
         long total = content.size();
 
         return new PageImpl<>(content, pageable, total);
