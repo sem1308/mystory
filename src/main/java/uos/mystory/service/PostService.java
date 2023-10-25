@@ -3,6 +3,7 @@ package uos.mystory.service;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.Post;
 import uos.mystory.domain.User;
@@ -16,6 +17,7 @@ import uos.mystory.repository.PostRepository;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
 
@@ -24,6 +26,7 @@ public class PostService {
      * @param insertPostDTO
      * @return 게시글 번호
      */
+    @Transactional(readOnly = false)
     public Long savePost(@NotNull InsertPostDTO insertPostDTO) {
         // url 중복 체크
         validateUrlDuplication(insertPostDTO.getUrl());
@@ -53,6 +56,7 @@ public class PostService {
      * @param updatePostDTO
      * @return
      */
+    @Transactional(readOnly = false)
     public void updatePost(@NotNull UpdatePostDTO updatePostDTO) {
         Post post = getPost(updatePostDTO.getId());
         post.update(updatePostDTO);
