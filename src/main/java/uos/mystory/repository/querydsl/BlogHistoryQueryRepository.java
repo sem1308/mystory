@@ -2,6 +2,7 @@ package uos.mystory.repository.querydsl;
 
 import org.springframework.stereotype.Repository;
 import uos.mystory.domain.history.BlogHistory;
+import uos.mystory.domain.history.QBlogHistory;
 import uos.mystory.dto.mapping.select.QSelectBlogHistoryDTO;
 import uos.mystory.dto.mapping.select.QSelectHistoryVisitsDTO;
 import uos.mystory.dto.mapping.select.SelectBlogHistoryDTO;
@@ -12,10 +13,10 @@ import java.util.List;
 import static uos.mystory.domain.history.QBlogHistory.blogHistory;
 
 @Repository
-public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport{
+public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport<BlogHistory, QBlogHistory>{
 
     public BlogHistoryQueryRepository() {
-        super(BlogHistory.class);
+        super(BlogHistory.class, blogHistory);
     }
 
     public List<SelectBlogHistoryDTO> findAllByBlogGroupByDateAndVisitedPath(Long blogId) {
@@ -27,13 +28,15 @@ public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport{
                 ))
                 .from(blogHistory)
                 .where(blogHistory.blog.id.eq(blogId))
-                .groupBy(blogHistory.createdDate, blogHistory.path).fetch();
+                .groupBy(blogHistory.createdDate, blogHistory.path)
+                .fetch();
     }
 
     public List<SelectHistoryVisitsDTO> getVisitsByBlogGroupByDate(Long blogId) {
         return select(new QSelectHistoryVisitsDTO(blogHistory.createdDate, blogHistory.count()))
                 .from(blogHistory)
                 .where(blogHistory.blog.id.eq(blogId))
-                .groupBy(blogHistory.createdDate).fetch();
+                .groupBy(blogHistory.createdDate)
+                .fetch();
     }
 }

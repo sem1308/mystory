@@ -94,7 +94,7 @@ public class BlogServiceTest {
     public void 유저가_가진_블로그_목록_가져오기() throws Exception {
         //given
         int page = 0;
-        int size = 2;
+        int size = 3;
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(Sort.Order.desc("name"));
         Sort sort = Sort.by(orders);
