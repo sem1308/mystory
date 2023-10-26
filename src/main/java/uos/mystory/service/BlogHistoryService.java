@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,22 +32,23 @@ public class BlogHistoryService {
         List<SelectBlogHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByBlogGroupByDateAndVisitedPath(blogId);
 
         // 날짜에 따른 이력 정보 생성
-        Map<LocalDate, HistoryInfoDTO> blogHistoryInfoDTOSByDate = new HashMap<>();
-
         AtomicLong totalVisits = new AtomicLong(0L);
-        selectBlogHistoryDTOS.forEach(blogHistoryInfoDTO -> {
-            LocalDate date = blogHistoryInfoDTO.date();
-            HistoryInfoDTO historyInfoDTO = blogHistoryInfoDTOSByDate.get(date);
-            if (historyInfoDTO == null) {
-                historyInfoDTO = new HistoryInfoDTO(new ArrayList<>(),0L);
-            }
-            List<VisitsInfoDTO> histories = historyInfoDTO.getHistories();
-            historyInfoDTO.getHistories().add(new VisitsInfoDTO(blogHistoryInfoDTO.path(), blogHistoryInfoDTO.visits()));
-            historyInfoDTO.setHistories(histories);
-            historyInfoDTO.setTotalVisits(historyInfoDTO.getTotalVisits()+blogHistoryInfoDTO.visits());
-            blogHistoryInfoDTOSByDate.put(date,historyInfoDTO);
-            totalVisits.addAndGet(blogHistoryInfoDTO.visits());
-        });
+        Map<LocalDate, HistoryInfoDTO> blogHistoryInfoDTOSByDate = selectBlogHistoryDTOS.stream()
+                .collect(Collectors.groupingBy(
+                        SelectBlogHistoryDTO::date,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> {
+                                    AtomicLong visits = new AtomicLong(0L);
+                                    List<VisitsInfoDTO> histories = list.stream()
+                                            .peek(blogHistoryInfoDTO -> visits.addAndGet(blogHistoryInfoDTO.visits()))
+                                            .map(blogHistoryInfoDTO -> new VisitsInfoDTO(blogHistoryInfoDTO.path(), blogHistoryInfoDTO.visits()))
+                                            .collect(Collectors.toList());
+                                    totalVisits.addAndGet(visits.get());
+                                    return new HistoryInfoDTO(histories, visits.get());
+                                }
+                        )
+                ));
 
         return new BlogHistoryInfoDTO(blogId, blogHistoryInfoDTOSByDate, totalVisits.get());
     }
