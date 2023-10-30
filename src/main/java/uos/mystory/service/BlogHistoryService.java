@@ -5,18 +5,13 @@ import org.springframework.stereotype.Service;
 import uos.mystory.domain.enums.VisitedPath;
 import uos.mystory.dto.mapping.select.SelectBlogHistoryDTO;
 import uos.mystory.dto.response.BlogHistoryInfoDTO;
-import uos.mystory.dto.response.HistoryInfoDTO;
-import uos.mystory.dto.response.VisitsInfoDTO;
 import uos.mystory.repository.BlogHistoryRepository;
+import uos.mystory.repository.condition.BlogHistorySearchCondition;
 import uos.mystory.repository.querydsl.BlogHistoryQueryRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,36 +19,36 @@ public class BlogHistoryService {
     private final BlogHistoryRepository blogHistoryRepository;
     private final BlogHistoryQueryRepository blogHistoryQueryRepository;
 
-    public List<SelectBlogHistoryDTO> getBlogHistoryInfoDTOsByBlogId(Long blogId) {
-        return blogHistoryQueryRepository.findAllByBlogGroupByDateAndVisitedPath(blogId);
+    /**
+     * @Title 블로그 번호로 블로그 이력 얻기
+     * @param blogId
+     * @return 블로그 이력 DTO
+     */
+    public List<SelectBlogHistoryDTO> getBlogHistoryInfoDTOs(Long blogId) {
+        return blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
     }
 
-    public BlogHistoryInfoDTO getBlogHistoriesByBlogId(Long blogId) {
-        List<SelectBlogHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByBlogGroupByDateAndVisitedPath(blogId);
-
-        // 날짜에 따른 이력 정보 생성
-        AtomicLong totalVisits = new AtomicLong(0L);
-        Map<LocalDate, HistoryInfoDTO> blogHistoryInfoDTOSByDate = selectBlogHistoryDTOS.stream()
-                .collect(Collectors.groupingBy(
-                        SelectBlogHistoryDTO::date,
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> {
-                                    AtomicLong visits = new AtomicLong(0L);
-                                    List<VisitsInfoDTO> histories = list.stream()
-                                            .peek(blogHistoryInfoDTO -> visits.addAndGet(blogHistoryInfoDTO.visits()))
-                                            .map(blogHistoryInfoDTO -> new VisitsInfoDTO(blogHistoryInfoDTO.path(), blogHistoryInfoDTO.visits()))
-                                            .collect(Collectors.toList());
-                                    totalVisits.addAndGet(visits.get());
-                                    return new HistoryInfoDTO(histories, visits.get());
-                                }
-                        )
-                ));
-
-        return new BlogHistoryInfoDTO(blogId, blogHistoryInfoDTOSByDate, totalVisits.get());
+    /**
+     * @Title 블로그 번호로 정리된 블로그 이력 얻기
+     * @param blogId
+     * @return 정리된 블로그 이력
+     */
+    public BlogHistoryInfoDTO getBlogHistories(Long blogId) {
+        List<SelectBlogHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
+        return BlogHistoryInfoDTO.of(blogId, selectBlogHistoryDTOS);
     }
 
-    @Deprecated(since = "it's regacy code. use getHistoriesByBlogId")
+    /**
+     * @Title 특정 조건으로(blogId, from, to) 정리된 블로그 이력 얻기 ex) 특정 날짜의 블로그 이력 얻기
+     * @param condition
+     * @return 정리된 블로그 이력
+     */
+    public BlogHistoryInfoDTO getBlogHistories(BlogHistorySearchCondition condition) {
+        List<SelectBlogHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
+        return BlogHistoryInfoDTO.of(condition.blogId(), selectBlogHistoryDTOS);
+    }
+
+    @Deprecated(since = "it's regacy code. Use getHistoriesByBlogId")
     public List<SelectBlogHistoryDTO> getHistories(Long blogId) {
         List<Object[]> histories = blogHistoryRepository.findAllByBlogGroupByDateAndVisitedPath(blogId);
 
