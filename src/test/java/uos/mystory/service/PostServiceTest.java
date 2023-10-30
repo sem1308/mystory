@@ -1,39 +1,63 @@
 package uos.mystory.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import uos.mystory.domain.Blog;
 import uos.mystory.domain.Category;
 import uos.mystory.domain.Post;
+import uos.mystory.domain.User;
 import uos.mystory.domain.enums.OpenState;
 import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
+import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
+import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class PostServiceTest extends CategoryServiceTest{
+class PostServiceTest{
     @Autowired
-    protected PostService postService;
+    PostService postService;
 
-    protected Category category;
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    BlogService blogService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    User user;
+    Blog blog;
+    Category category;
 
     @BeforeEach
     public void setup() {
-        super.setup();
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
+        this.user = userService.getUser(id);
+        Long blogId = blogService.saveBlog(InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build());
+        this.blog = blogService.getBlog(blogId);
         Long categoryId = categoryService.saveCategory(InsertCategoryDTO.builder().name("BackEnd").blog(blog).build());
         this.category = categoryService.getCategory(categoryId);
     }
 
-    @Disabled("상속된 메서드는 실행하지 않습니다.")
-    public void 카테고리_생성() {}
+    @AfterEach
+    public void clear() {
+        userService.deleteUser(user.getId());
+        blogService.deleteBlog(blog.getId());
+        categoryService.deleteCategory(category.getId());
+    }
+
 
     @Test
     protected void 게시글_생성() throws Exception {

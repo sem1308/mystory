@@ -1,5 +1,6 @@
 package uos.mystory.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -17,15 +18,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class CommentServiceTest extends PostServiceTest{
+class CommentServiceTest{
+    @Autowired
+    PostService postService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    BlogService blogService;
+
+    @Autowired
+    CategoryService categoryService;
+
     @Autowired
     CommentService commentService;
 
+    User user;
+    Blog blog;
+    Category category;
     Post post;
 
     @BeforeEach
     public void setup() {
-        super.setup();
+        Long userId = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
+        this.user = userService.getUser(userId);
+        Long blogId = blogService.saveBlog(InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build());
+        this.blog = blogService.getBlog(blogId);
+        Long categoryId = categoryService.saveCategory(InsertCategoryDTO.builder().name("BackEnd").blog(blog).build());
+        this.category = categoryService.getCategory(categoryId);
+
         String title = "첫 게시글";
         String url = blog.getUrl()+"/"+title.replace(" ", "-");
         InsertPostDTO postDTO = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
@@ -34,10 +56,14 @@ class CommentServiceTest extends PostServiceTest{
         post = postService.getPost(id);
     }
 
-    @Disabled("상속된 메서드는 실행하지 않습니다.")
-    public void 게시글_생성() {}
-    @Disabled("상속된 메서드는 실행하지 않습니다.")
-    public void 게시글_변경() {}
+    @AfterEach
+    public void clear() {
+        userService.deleteUser(user.getId());
+        blogService.deleteBlog(blog.getId());
+        categoryService.deleteCategory(category.getId());
+        postService.deletePost(post.getId());
+    }
+
 
     @Test
     protected void 댓글_생성() throws Exception {

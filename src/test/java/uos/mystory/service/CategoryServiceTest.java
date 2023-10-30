@@ -1,5 +1,6 @@
 package uos.mystory.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -7,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.Category;
+import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
+import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateCategoryDTO;
 
 import java.util.List;
@@ -16,23 +19,33 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class CategoryServiceTest extends BlogServiceTest{
+class CategoryServiceTest{
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    BlogService blogService;
+
     @Autowired
     CategoryService categoryService;
 
+    User user;
     Blog blog;
 
     @BeforeEach
     public void setup() {
-        super.setup();
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
+        this.user = userService.getUser(id);
         Long blogId = blogService.saveBlog(InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build());
         this.blog = blogService.getBlog(blogId);
     }
 
-    @Disabled("상속된 메서드는 실행하지 않습니다.")
-    public void 블로그_생성() {}
-    @Disabled("상속된 메서드는 실행하지 않습니다.")
-    public void 블로그_변경() {}
+    @AfterEach
+    public void clear() {
+        userService.deleteUser(user.getId());
+        blogService.deleteBlog(blog.getId());
+    }
 
     @Test
     protected void 카테고리_생성() throws Exception {

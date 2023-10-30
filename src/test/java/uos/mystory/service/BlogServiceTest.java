@@ -1,5 +1,6 @@
 package uos.mystory.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
 import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.exception.DuplicateException;
+import uos.mystory.repository.UserRepository;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
 import java.util.ArrayList;
@@ -31,12 +33,19 @@ public class BlogServiceTest {
     BlogService blogService;
     @Autowired
     UserService userService;
+    @Autowired
+    UserRepository userRepository;
     User user;
 
     @BeforeEach
     public void setup() {
         Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
         this.user = userService.getUser(id);
+    }
+
+    @AfterEach
+    public void clear() {
+        userRepository.delete(user);
     }
 
     @Test
