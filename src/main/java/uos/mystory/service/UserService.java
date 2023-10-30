@@ -99,4 +99,8 @@ public class UserService {
     public Page<User> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
+    }
 }

@@ -7,12 +7,16 @@ import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.Post;
 import uos.mystory.domain.User;
+import uos.mystory.domain.enums.VisitedPath;
+import uos.mystory.domain.history.PostHistory;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
+import uos.mystory.dto.mapping.insert.InsertPostHistoryDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
 import uos.mystory.exception.DuplicateException;
 import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
+import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
 
 @Service
@@ -20,6 +24,7 @@ import uos.mystory.repository.PostRepository;
 @Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
+    private final PostHistoryRepository postHistoryRepository;
 
     /**
      * @title 게시글 등록
@@ -68,10 +73,25 @@ public class PostService {
      * @return 게시글 엔티티
      */
     public Post getPost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
-        // 조회수 1 증가
+        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
+    }
+
+    /**
+     * @title 게시글 번호로 블로그 엔티티 가져오기 (게시글을 방문 한 경우)
+     * @param id
+     * @return 게시글 엔티티
+     */
+    @Transactional(readOnly = false)
+    public Post getPostWhenVisit(Long id, VisitedPath path) {
+        Post post = getPost(id);
+        // 게시글 방문수 증가
         post.addVisits();
+        // 게시글 방문 이력 생성
+        postHistoryRepository.save(PostHistory.create(InsertPostHistoryDTO.builder().post(post).path(path).build()));
         return post;
     }
 
+    public void deletePost(Long id) {
+        postRepository.deleteById(id);
+    }
 }

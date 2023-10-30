@@ -59,4 +59,8 @@ public class CategoryService {
         return categoryRepository.findAllByBlog(blog);
     }
 
+
+    public void deleteCategory(Long id){
+        categoryRepository.deleteById(id);
+    }
 }

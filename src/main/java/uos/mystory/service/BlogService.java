@@ -111,4 +111,7 @@ public class BlogService {
         return blogQueryRepository.findAll(blogSearchCondition, pageable);
     }
 
+    public void deleteBlog(Long blogId) {
+        blogRepository.deleteById(blogId);
+    }
 }
