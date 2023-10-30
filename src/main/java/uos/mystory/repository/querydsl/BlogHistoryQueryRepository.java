@@ -4,11 +4,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.stereotype.Repository;
 import uos.mystory.domain.history.BlogHistory;
 import uos.mystory.domain.history.QBlogHistory;
-import uos.mystory.dto.mapping.select.QSelectBlogHistoryDTO;
-import uos.mystory.dto.mapping.select.QSelectHistoryVisitsDTO;
-import uos.mystory.dto.mapping.select.SelectBlogHistoryDTO;
-import uos.mystory.dto.mapping.select.SelectHistoryVisitsDTO;
-import uos.mystory.repository.condition.BlogHistorySearchCondition;
+import uos.mystory.dto.mapping.select.*;
+import uos.mystory.repository.condition.HistorySearchCondition;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,8 +19,8 @@ public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport<BlogH
         super(BlogHistory.class, blogHistory);
     }
 
-    public List<SelectBlogHistoryDTO> findAllByBlogIdGroupByDateAndVisitedPath(Long blogId) {
-        return select(new QSelectBlogHistoryDTO(
+    public List<SelectHistoryDTO> findAllByBlogIdGroupByDateAndVisitedPath(Long blogId) {
+        return select(new QSelectHistoryDTO(
                         blogHistory.blog.id,
                         blogHistory.createdDate,
                         blogHistory.path,
@@ -35,8 +32,8 @@ public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport<BlogH
                 .fetch();
     }
 
-    public List<SelectBlogHistoryDTO> findAllByConditionGroupByDateAndVisitedPath(BlogHistorySearchCondition condition) {
-        return select(new QSelectBlogHistoryDTO(
+    public List<SelectHistoryDTO> findAllByConditionGroupByDateAndVisitedPath(HistorySearchCondition condition) {
+        return select(new QSelectHistoryDTO(
                 blogHistory.blog.id,
                 blogHistory.createdDate,
                 blogHistory.path,
@@ -44,7 +41,7 @@ public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport<BlogH
         ))
                 .from(blogHistory)
                 .where(
-                        blogIdEq(condition.blogId()),
+                        blogIdEq(condition.id()),
                         dateBetween(condition.from(), condition.to())
                         )
                 .groupBy(blogHistory.createdDate, blogHistory.path)

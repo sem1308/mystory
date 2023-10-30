@@ -2,20 +2,17 @@ package uos.mystory.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import uos.mystory.domain.enums.VisitedPath;
-import uos.mystory.dto.mapping.select.SelectBlogHistoryDTO;
-import uos.mystory.dto.response.BlogHistoryInfoDTO;
+import uos.mystory.dto.mapping.select.SelectHistoryDTO;
+import uos.mystory.dto.response.HistoryInfoDTO;
 import uos.mystory.repository.BlogHistoryRepository;
-import uos.mystory.repository.condition.BlogHistorySearchCondition;
+import uos.mystory.repository.condition.HistorySearchCondition;
 import uos.mystory.repository.querydsl.BlogHistoryQueryRepository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BlogHistoryService {
+public class BlogHistoryService implements HistoryService{
     private final BlogHistoryRepository blogHistoryRepository;
     private final BlogHistoryQueryRepository blogHistoryQueryRepository;
 
@@ -24,7 +21,7 @@ public class BlogHistoryService {
      * @param blogId
      * @return 블로그 이력 DTO
      */
-    public List<SelectBlogHistoryDTO> getBlogHistoryInfoDTOs(Long blogId) {
+    public List<SelectHistoryDTO> getHistoryInfoDTOs(Long blogId) {
         return blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
     }
 
@@ -33,9 +30,9 @@ public class BlogHistoryService {
      * @param blogId
      * @return 정리된 블로그 이력
      */
-    public BlogHistoryInfoDTO getBlogHistories(Long blogId) {
-        List<SelectBlogHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
-        return BlogHistoryInfoDTO.of(blogId, selectBlogHistoryDTOS);
+    public HistoryInfoDTO getHistories(Long blogId) {
+        List<SelectHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
+        return HistoryInfoDTO.of(blogId, selectBlogHistoryDTOS);
     }
 
     /**
@@ -43,27 +40,8 @@ public class BlogHistoryService {
      * @param condition
      * @return 정리된 블로그 이력
      */
-    public BlogHistoryInfoDTO getBlogHistories(BlogHistorySearchCondition condition) {
-        List<SelectBlogHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
-        return BlogHistoryInfoDTO.of(condition.blogId(), selectBlogHistoryDTOS);
-    }
-
-    @Deprecated(since = "it's regacy code. Use getHistoriesByBlogId")
-    public List<SelectBlogHistoryDTO> getHistories(Long blogId) {
-        List<Object[]> histories = blogHistoryRepository.findAllByBlogGroupByDateAndVisitedPath(blogId);
-
-        List<SelectBlogHistoryDTO> historyInfoDTOS = new ArrayList<>();
-
-        histories.forEach(history->{
-            Long blogID = (Long) history[0];
-            LocalDate date = (LocalDate) history[1];
-            VisitedPath path = (VisitedPath) history[2];
-            Long visits = (Long) history[3];
-
-            // do something with entities
-            historyInfoDTOS.add(new SelectBlogHistoryDTO(blogID, date, path, visits));
-        });
-
-        return historyInfoDTOS;
+    public HistoryInfoDTO getHistories(HistorySearchCondition condition) {
+        List<SelectHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
+        return HistoryInfoDTO.of(condition.id(), selectBlogHistoryDTOS);
     }
 }
