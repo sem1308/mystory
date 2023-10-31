@@ -14,6 +14,7 @@ import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertGuestBookDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateGuestBookDTO;
+import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.repository.GuestBookRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,5 +80,20 @@ class GuestBookServiceTest{
         //then
         assertEquals(guestBook.getContent(), updatedContent);
         System.out.println(guestBook);
+    }
+
+    @Test
+    public void 방명록_삭제() throws Exception {
+        //given
+        String content = "첫 방명록";
+        InsertGuestBookDTO insertGuestBookDTO = InsertGuestBookDTO.builder().content(content).blog(blog).build();
+
+        //when
+        Long id = guestBookService.saveGuestBook(insertGuestBookDTO);
+        guestBookService.deleteGuestBook(id);
+
+        //then
+        assertThrows(ResourceNotFoundException.class, () -> guestBookService.getGuestBook(id));
+
     }
 }

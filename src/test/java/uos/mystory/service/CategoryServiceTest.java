@@ -13,6 +13,7 @@ import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateCategoryDTO;
+import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.repository.CategoryRepository;
 
 import java.util.List;
@@ -21,6 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CategoryServiceTest{
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Autowired
     UserService userService;
@@ -28,11 +34,6 @@ class CategoryServiceTest{
     @Autowired
     BlogService blogService;
 
-    @Autowired
-    CategoryService categoryService;
-
-    @Autowired
-    CategoryRepository categoryRepository;
 
     User user;
     Blog blog;
@@ -103,5 +104,18 @@ class CategoryServiceTest{
         assertEquals(categories.size(), 2);
         System.out.println(categories);
 
+    }
+
+    @Test
+    public void 카테고리_삭제() throws Exception {
+        //given
+        InsertCategoryDTO categoryDTO = InsertCategoryDTO.builder().name("BackEnd").blog(blog).build();
+
+        //when
+        Long id = categoryService.saveCategory(categoryDTO);
+        categoryService.deleteCategory(id);
+
+        //then
+        assertThrows(ResourceNotFoundException.class, () -> categoryService.getCategory(id));
     }
 }

@@ -19,6 +19,7 @@ import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
+import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
 
@@ -109,6 +110,24 @@ class PostServiceTest{
         assertEquals(updatedPost.getWriteType(),updatedWriteType);
         assertEquals(updatedPost.getOpenState(),updatedOpenState);
         System.out.println(updatedPost);
+    }
+
+    @Test
+    public void 게시글_삭제() throws Exception {
+        //given
+        String title = "첫 게시글";
+        String url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+
+        //when
+        Long id = postService.savePost(postDTO);
+        postService.deletePost(id);
+
+        //then
+        assertThrows(ResourceNotFoundException.class,
+                ()->postService.getPost(id)
+        );
     }
 
 }

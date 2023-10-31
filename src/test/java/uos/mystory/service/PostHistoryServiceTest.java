@@ -20,6 +20,7 @@ import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.response.PostHistoryInfoDTO;
+import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.condition.PostHistorySearchCondition;
 import uos.mystory.repository.querydsl.regacy.RegacyPostHistoryQueryRepository;
@@ -48,7 +49,6 @@ class PostHistoryServiceTest{
     User user;
     Blog blog;
     Category category;
-
     Post post;
 
     @BeforeEach
@@ -99,5 +99,29 @@ class PostHistoryServiceTest{
         //then
         assertEquals(5, postHistories.getTotalVisits());
         assertEquals(0, postHistories2.getTotalVisits());
+    }
+
+    @Test
+    public void 게시글_이력_삭제() throws Exception {
+        // 게시글 삭제 시 게시글 이력이 전부 삭제되는지 확인한다.
+        //given
+        postService.getPostWhenVisit(post.getId(), VisitedPath.SEARCH);
+        postService.getPostWhenVisit(post.getId(), VisitedPath.SEARCH);
+        postService.getPostWhenVisit(post.getId(), VisitedPath.SEARCH);
+        postService.getPostWhenVisit(post.getId(), VisitedPath.DEVICE);
+        postService.getPostWhenVisit(post.getId(), VisitedPath.DEVICE);
+
+        LocalDate from = LocalDate.now();
+        LocalDate to = LocalDate.now();
+
+        PostHistorySearchCondition condition = new PostHistorySearchCondition(post.getId(), from, to);
+
+        //when
+        postService.deletePost(post.getId());
+        PostHistoryInfoDTO postHistories = postHistoryService.getPostHistories(condition);
+
+        //then
+        assertThrows(ResourceNotFoundException.class,()->postService.getPost(post.getId()));
+        assertEquals(0, postHistories.getTotalVisits());
     }
 }

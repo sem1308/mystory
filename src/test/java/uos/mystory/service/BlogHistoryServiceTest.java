@@ -121,4 +121,25 @@ class BlogHistoryServiceTest{
         assertEquals(5, histories.getTotalVisits());
         assertEquals(0, histories2.getTotalVisits());
     }
+
+    @Test
+    public void 블로그_이력_삭제() throws Exception {
+        /*
+            블로그 삭제시 블로그의 모든 이력 삭제 테스트
+        */
+
+        //given
+        blogService.getBlogWhenVisit(blog.getId(), VisitedPath.SEARCH);
+        blogService.getBlogWhenVisit(blog.getId(), VisitedPath.SEARCH);
+        blogService.getBlogWhenVisit(blog.getId(), VisitedPath.DEVICE);
+        blogService.getBlogWhenVisit(blog.getId(), VisitedPath.DEVICE);
+        blogService.getBlogWhenVisit(blog.getId(), VisitedPath.DEVICE);
+
+        //when
+        blogService.deleteBlog(blog.getId());
+        HistoryInfoDTO histories = blogHistoryService.getHistories(blog.getId());
+
+        //then
+        assertEquals(0,histories.getTotalVisits());
+    }
 }

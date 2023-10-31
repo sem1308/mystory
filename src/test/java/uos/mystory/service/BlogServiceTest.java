@@ -17,6 +17,7 @@ import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
 import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.exception.DuplicateException;
+import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.repository.BlogRepository;
 import uos.mystory.repository.UserRepository;
 import uos.mystory.repository.condition.BlogSearchCondition;
@@ -33,9 +34,9 @@ public class BlogServiceTest {
     @Autowired
     BlogService blogService;
     @Autowired
-    UserService userService;
-    @Autowired
     BlogRepository blogRepository;
+    @Autowired
+    UserService userService;
     User user;
 
     @BeforeEach
@@ -134,5 +135,19 @@ public class BlogServiceTest {
 
         // condition2에 해당하는 user가 없어야 함
         assertEquals(0,blogInfoDTOS2.getTotalElements());
+    }
+
+    @Test
+    public void 블로그_삭제() throws Exception {
+        //given
+        InsertBlogDTO insertBlogDTO = InsertBlogDTO.builder().name("Dev").url("https://han-dev.mystory.com").description("기본 블로그").user(user).build();
+
+        //when
+        Long id = blogService.saveBlog(insertBlogDTO);
+        blogService.deleteBlog(id);
+
+        //then
+        assertThrows(ResourceNotFoundException.class, () -> blogService.getBlog(id));
+
     }
 }

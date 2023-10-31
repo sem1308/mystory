@@ -85,4 +85,18 @@ public class UserServiceTest {
 
     }
 
+    @Test
+    public void 유저_삭제() throws Exception {
+        //given
+        Long id = userService.saveUser(InsertUserDTO.builder().userId("sem1308").userPw("1308").nickname("ddory").phoneNum("01000000000").build());
+
+        //when
+        userService.deleteUser(id);
+
+        //then
+        assertThrows(ResourceNotFoundException.class,()->
+                userService.getUser(id)
+        );
+    }
+
 }

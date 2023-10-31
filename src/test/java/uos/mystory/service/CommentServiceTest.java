@@ -13,6 +13,7 @@ import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
 import uos.mystory.dto.mapping.insert.*;
 import uos.mystory.dto.mapping.update.UpdateCommentDTO;
+import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.repository.CommentRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,6 +102,20 @@ class CommentServiceTest{
         //then
         assertEquals(updatedComment.getContent(),updatedContend);
         System.out.println(comment);
+    }
+
+    @Test
+    public void 댓글_삭제() throws Exception {
+        //given
+        String content = "정말 유익한 글이에요!";
+        InsertCommentDTO insertCommentDTO = InsertCommentDTO.builder().content(content).post(post).build();
+
+        //when
+        Long id = commentService.saveComment(insertCommentDTO);
+        commentService.deleteComment(id);
+
+        //then
+        assertThrows(ResourceNotFoundException.class, () -> commentService.getComment(id));
     }
     
 }
