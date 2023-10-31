@@ -25,7 +25,7 @@ import uos.mystory.repository.querydsl.BlogQueryRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = false)
+@Transactional
 public class BlogService {
     private final BlogRepository blogRepository;
     private final BlogQueryRepository blogQueryRepository;
@@ -86,7 +86,6 @@ public class BlogService {
      * @param id
      * @return 블로그 엔티티
      */
-    @Transactional(readOnly = true)
     public Blog getBlogWhenVisit(Long id, VisitedPath path) {
         Blog blog = getBlog(id);
         // 블로그 방문수 증가

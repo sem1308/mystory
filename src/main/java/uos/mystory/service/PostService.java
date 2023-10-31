@@ -21,7 +21,7 @@ import uos.mystory.repository.PostRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class PostService {
     private final PostRepository postRepository;
     private final PostHistoryRepository postHistoryRepository;
@@ -31,7 +31,6 @@ public class PostService {
      * @param insertPostDTO
      * @return 게시글 번호
      */
-    @Transactional(readOnly = false)
     public Long savePost(@NotNull InsertPostDTO insertPostDTO) {
         // url 중복 체크
         validateUrlDuplication(insertPostDTO.getUrl());
@@ -61,7 +60,6 @@ public class PostService {
      * @param updatePostDTO
      * @return
      */
-    @Transactional(readOnly = false)
     public void updatePost(@NotNull UpdatePostDTO updatePostDTO) {
         Post post = getPost(updatePostDTO.getId());
         post.update(updatePostDTO);
@@ -72,6 +70,7 @@ public class PostService {
      * @param id
      * @return 게시글 엔티티
      */
+    @Transactional(readOnly = true)
     public Post getPost(Long id) {
         return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
     }
@@ -81,7 +80,6 @@ public class PostService {
      * @param id
      * @return 게시글 엔티티
      */
-    @Transactional(readOnly = false)
     public Post getPostWhenVisit(Long id, VisitedPath path) {
         Post post = getPost(id);
         // 게시글 방문수 증가

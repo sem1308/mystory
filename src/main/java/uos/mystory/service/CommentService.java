@@ -13,7 +13,7 @@ import uos.mystory.repository.CommentRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class CommentService {
     private final CommentRepository commentRepository;
 
@@ -22,7 +22,6 @@ public class CommentService {
      * @param insertCommentDTO
      * @return 댓글 번호
      */
-    @Transactional(readOnly = false)
     public Long saveComment(@NotNull InsertCommentDTO insertCommentDTO) {
         Comment comment = Comment.create(insertCommentDTO);
         return commentRepository.save(comment).getId();
@@ -32,7 +31,6 @@ public class CommentService {
      * @Title 댓글 정보 수정하기
      * @param updateCommentDTO
      */
-    @Transactional(readOnly = false)
     public void updateComment(@NotNull UpdateCommentDTO updateCommentDTO) {
         Comment comment = getComment(updateCommentDTO.getId());
         comment.update(updateCommentDTO);
@@ -43,6 +41,7 @@ public class CommentService {
      * @param id
      * @return 댓글 엔티티
      */
+    @Transactional(readOnly = true)
     public Comment getComment(Long id) {
         return commentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.comment")));
     }

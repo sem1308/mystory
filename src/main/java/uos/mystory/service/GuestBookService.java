@@ -13,7 +13,7 @@ import uos.mystory.repository.GuestBookRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class GuestBookService {
     private final GuestBookRepository guestBookRepository;
 
@@ -22,7 +22,6 @@ public class GuestBookService {
      * @param insertGuestBookDTO
      * @return 방명록 번호
      */
-    @Transactional(readOnly = false)
     public Long saveGuestBook(@NotNull InsertGuestBookDTO insertGuestBookDTO) {
         GuestBook guestBook = GuestBook.create(insertGuestBookDTO);
         return guestBookRepository.save(guestBook).getId();
@@ -32,7 +31,6 @@ public class GuestBookService {
      * @Title 방명록 내용 변경
      * @param updateGuestBookDTO
      */
-    @Transactional(readOnly = false)
     public void updateGuestBook(@NotNull UpdateGuestBookDTO updateGuestBookDTO) {
         GuestBook guestBook = getGuestBook(updateGuestBookDTO.getId());
         guestBook.update(updateGuestBookDTO);
@@ -43,6 +41,7 @@ public class GuestBookService {
      * @param id
      * @return 방명록 엔티티
      */
+    @Transactional(readOnly = true)
     public GuestBook getGuestBook(Long id) {
         return guestBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
     }

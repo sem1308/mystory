@@ -2,6 +2,7 @@ package uos.mystory.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.dto.mapping.select.SelectHistoryDTO;
 import uos.mystory.dto.response.HistoryInfoDTO;
 import uos.mystory.repository.BlogHistoryRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BlogHistoryService implements HistoryService{
     private final BlogHistoryRepository blogHistoryRepository;
     private final BlogHistoryQueryRepository blogHistoryQueryRepository;
