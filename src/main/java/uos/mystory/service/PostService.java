@@ -2,6 +2,8 @@ package uos.mystory.service;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.Blog;
@@ -11,6 +13,8 @@ import uos.mystory.domain.enums.VisitedPath;
 import uos.mystory.domain.history.PostHistory;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertPostHistoryDTO;
+import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
+import uos.mystory.dto.mapping.select.SelectPostInfoDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
 import uos.mystory.exception.DuplicateException;
 import uos.mystory.exception.MismatchException;
@@ -18,6 +22,9 @@ import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
+import uos.mystory.repository.condition.BlogSearchCondition;
+import uos.mystory.repository.condition.PostSearchCondition;
+import uos.mystory.repository.querydsl.PostQueryRepository;
 
 import java.util.List;
 
@@ -27,6 +34,7 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final PostHistoryRepository postHistoryRepository;
+    private final PostQueryRepository postQueryRepository;
 
     /**
      * @title 게시글 등록
@@ -89,6 +97,11 @@ public class PostService {
         // 게시글 방문 이력 생성
         postHistoryRepository.save(PostHistory.create(InsertPostHistoryDTO.builder().post(post).path(path).build()));
         return post;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SelectPostInfoDTO> getPostsgetBlogsByContidion(PostSearchCondition postSearchCondition, Pageable pageable) {
+        return postQueryRepository.findAll(postSearchCondition, pageable);
     }
 
     /**
