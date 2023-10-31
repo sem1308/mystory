@@ -46,4 +46,7 @@ public class CommentService {
         return commentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.comment")));
     }
 
+    public void deleteComment(Long id) {
+        commentRepository.deleteById(id);
+    }
 }

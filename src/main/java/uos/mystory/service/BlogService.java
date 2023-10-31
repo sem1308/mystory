@@ -23,6 +23,8 @@ import uos.mystory.repository.BlogRepository;
 import uos.mystory.repository.condition.BlogSearchCondition;
 import uos.mystory.repository.querydsl.BlogQueryRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -112,6 +114,8 @@ public class BlogService {
     }
 
     public void deleteBlog(Long blogId) {
+        List<BlogHistory> blogHistories = blogHistoryRepository.findAllByBlogId(blogId);
+        blogHistoryRepository.deleteAll(blogHistories);
         blogRepository.deleteById(blogId);
     }
 }

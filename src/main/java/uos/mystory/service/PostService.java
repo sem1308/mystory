@@ -19,6 +19,8 @@ import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -90,6 +92,8 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
+        List<PostHistory> postHistories = postHistoryRepository.findAllByPostId(id);
+        postHistoryRepository.deleteAll(postHistories);
         postRepository.deleteById(id);
     }
 }

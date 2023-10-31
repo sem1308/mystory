@@ -46,4 +46,8 @@ public class GuestBookService {
         return guestBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
     }
 
+    public void deleteGuestBook(Long id) {
+        guestBookRepository.deleteById(id);
+    }
+
 }
