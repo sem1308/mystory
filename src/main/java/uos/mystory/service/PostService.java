@@ -78,7 +78,7 @@ public class PostService {
     }
 
     /**
-     * @title 게시글 번호로 블로그 엔티티 가져오기 (게시글을 방문 한 경우)
+     * @title 게시글 번호로 게시글 엔티티 가져오기 (게시글을 방문 한 경우)
      * @param id
      * @return 게시글 엔티티
      */
@@ -91,6 +91,10 @@ public class PostService {
         return post;
     }
 
+    /**
+     * @title 게시글 번호로 게시글 삭제하기
+     * @param id
+     */
     public void deletePost(Long id) {
         List<PostHistory> postHistories = postHistoryRepository.findAllByPostId(id);
         postHistoryRepository.deleteAll(postHistories);

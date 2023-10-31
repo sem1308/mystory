@@ -19,7 +19,7 @@ public class PostHistoryService implements HistoryService{
     private final PostHistoryQueryRepository postHistoryQueryRepository;
 
     /**
-     * @Title 게시글 번호로 게시글 이력 얻기
+     * @title 게시글 번호로 게시글 이력 얻기
      * @param postId
      * @return 게시글 이력 DTO
      */
@@ -29,7 +29,7 @@ public class PostHistoryService implements HistoryService{
     }
 
     /**
-     * @Title 게시글 번호로 정리된 게시글 이력 얻기
+     * @title 게시글 번호로 정리된 게시글 이력 얻기
      * @param postId
      * @return 정리된 게시글 이력
      */
@@ -40,7 +40,7 @@ public class PostHistoryService implements HistoryService{
     }
 
     /**
-     * @Title 특정 조건으로(postId, from, to) 정리된 게시글 이력 얻기 ex) 특정 날짜의 게시글 이력 얻기
+     * @title 특정 조건으로(postId, from, to) 정리된 게시글 이력 얻기 ex) 특정 날짜의 게시글 이력 얻기
      * @param condition
      * @return 정리된 게시글 이력
      */

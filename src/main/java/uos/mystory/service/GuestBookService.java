@@ -18,7 +18,7 @@ public class GuestBookService {
     private final GuestBookRepository guestBookRepository;
 
     /**
-     * @Title 방명록 저장
+     * @title 방명록 저장
      * @param insertGuestBookDTO
      * @return 방명록 번호
      */
@@ -28,7 +28,7 @@ public class GuestBookService {
     }
 
     /**
-     * @Title 방명록 내용 변경
+     * @title 방명록 내용 변경
      * @param updateGuestBookDTO
      */
     public void updateGuestBook(@NotNull UpdateGuestBookDTO updateGuestBookDTO) {
@@ -37,7 +37,7 @@ public class GuestBookService {
     }
 
     /**
-     * @Title 방명록 번호로 방명록 엔티티 가져오기
+     * @title 방명록 번호로 방명록 엔티티 가져오기
      * @param id
      * @return 방명록 엔티티
      */
@@ -46,6 +46,10 @@ public class GuestBookService {
         return guestBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
     }
 
+    /**
+     * @title 방명록 번호로 방명록 삭제
+     * @param id
+     */
     public void deleteGuestBook(Long id) {
         guestBookRepository.deleteById(id);
     }

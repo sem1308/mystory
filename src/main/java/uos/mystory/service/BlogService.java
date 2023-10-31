@@ -108,11 +108,21 @@ public class BlogService {
         return blogRepository.findAll(pageable);
     }
 
+    /**
+     * @title 조건에 따른 블로그 정보 가져오기
+     * @param blogSearchCondition
+     * @param pageable
+     * @return
+     */
     @Transactional(readOnly = true)
     public Page<SelectBlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition, Pageable pageable) {
         return blogQueryRepository.findAll(blogSearchCondition, pageable);
     }
 
+    /**
+     * @title 블로그 번호로 블로그 삭제
+     * @param blogId
+     */
     public void deleteBlog(Long blogId) {
         List<BlogHistory> blogHistories = blogHistoryRepository.findAllByBlogId(blogId);
         blogHistoryRepository.deleteAll(blogHistories);

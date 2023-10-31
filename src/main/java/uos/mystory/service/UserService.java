@@ -23,9 +23,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
+     * @title 유저 회원가입
      * @param insertUserDTO
      * @return 유저 번호
-     * @title 유저 회원가입
      */
     public Long saveUser(@NotNull InsertUserDTO insertUserDTO) {
         // 아이디 중복 체크
@@ -47,9 +47,9 @@ public class UserService {
     }
 
     /**
+     * @title 유저 로그인
      * @param userId, userPw
      * @return 유저 엔티티
-     * @title 유저 로그인
      */
     @Transactional(readOnly = true)
     public User signIn(String userId, String userPw) {
@@ -63,9 +63,9 @@ public class UserService {
     }
 
     /**
+     * @title 유저 정보 변경
      * @param updateUserDTO
      * @return 유저 엔티티
-     * @title 유저 정보 변경
      */
     public void updateUser(@NotNull UpdateUserDTO updateUserDTO) {
         User user = getUser(updateUserDTO.getId());
@@ -73,9 +73,9 @@ public class UserService {
     }
 
     /**
+     * @title 유저 번호로 유저 불러오기
      * @param id
      * @return 유저
-     * @title 유저 번호로 유저 불러오기
      */
     @Transactional(readOnly = true)
     public User getUser(Long id) {
@@ -83,9 +83,9 @@ public class UserService {
     }
 
     /**
+     * @title 유저 아이디로 유저 불러오기
      * @param userId
      * @return 유저
-     * @title 유저 아이디로 유저 불러오기
      */
     @Transactional(readOnly = true)
     public User getUserByUserId(String userId) {
@@ -93,15 +93,19 @@ public class UserService {
     }
 
     /**
+     * @title 유저 번호로 유저 불러오기
      * @param pageable
      * @return 페이징된 유저 목록
-     * @title 유저 번호로 유저 불러오기
      */
     @Transactional(readOnly = true)
     public Page<User> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
+    /**
+     * @title 유저 번호로 유저 삭제하기
+     * @param userId
+     */
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
     }

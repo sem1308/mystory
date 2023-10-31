@@ -19,7 +19,7 @@ public class BlogHistoryService implements HistoryService{
     private final BlogHistoryQueryRepository blogHistoryQueryRepository;
 
     /**
-     * @Title 블로그 번호로 블로그 이력 얻기
+     * @title 블로그 번호로 블로그 이력 얻기
      * @param blogId
      * @return 블로그 이력 DTO
      */
@@ -28,7 +28,7 @@ public class BlogHistoryService implements HistoryService{
     }
 
     /**
-     * @Title 블로그 번호로 정리된 블로그 이력 얻기
+     * @title 블로그 번호로 정리된 블로그 이력 얻기
      * @param blogId
      * @return 정리된 블로그 이력
      */
@@ -38,7 +38,7 @@ public class BlogHistoryService implements HistoryService{
     }
 
     /**
-     * @Title 특정 조건으로(blogId, from, to) 정리된 블로그 이력 얻기 ex) 특정 날짜의 블로그 이력 얻기
+     * @title 특정 조건으로(blogId, from, to) 정리된 블로그 이력 얻기 ex) 특정 날짜의 블로그 이력 얻기
      * @param condition
      * @return 정리된 블로그 이력
      */

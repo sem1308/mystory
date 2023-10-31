@@ -18,7 +18,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
-     * @Title 댓글 생성하기
+     * @title 댓글 생성하기
      * @param insertCommentDTO
      * @return 댓글 번호
      */
@@ -28,7 +28,7 @@ public class CommentService {
     }
 
     /**
-     * @Title 댓글 정보 수정하기
+     * @title 댓글 정보 수정하기
      * @param updateCommentDTO
      */
     public void updateComment(@NotNull UpdateCommentDTO updateCommentDTO) {
@@ -37,7 +37,7 @@ public class CommentService {
     }
 
     /**
-     * @Title 댓글 번호로 댓글 가져오기
+     * @title 댓글 번호로 댓글 가져오기
      * @param id
      * @return 댓글 엔티티
      */
@@ -46,6 +46,10 @@ public class CommentService {
         return commentRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.comment")));
     }
 
+    /**
+     * @title 댓글 번호로 댓글 삭제
+     * @param id
+     */
     public void deleteComment(Long id) {
         commentRepository.deleteById(id);
     }

@@ -21,9 +21,9 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     /**
+     * @title 특정 블로그의 카테고리 생성
      * @param insertCategoryDTO
      * @return 카테고리 번호
-     * @title 특정 블로그의 카테고리 생성
      */
     public Long saveCategory(@NotNull InsertCategoryDTO insertCategoryDTO) {
         Category category = Category.create(insertCategoryDTO);
@@ -31,7 +31,7 @@ public class CategoryService {
     }
 
     /**
-     * @Title 카테고리 정보 변경
+     * @title 카테고리 정보 변경
      * @param updateCategoryDTO
      */
     public void updateCategory(@NotNull UpdateCategoryDTO updateCategoryDTO) {
@@ -40,7 +40,7 @@ public class CategoryService {
     }
 
     /**
-     * @Title 카테고리 번호로 카테고리 엔티티 가져오기
+     * @title 카테고리 번호로 카테고리 엔티티 가져오기
      * @param id
      * @return 카테고리 엔티티
      */
@@ -50,7 +50,7 @@ public class CategoryService {
     }
 
     /**
-     * @Title 특정 블로그의 카테고리 목록 가져오기
+     * @title 특정 블로그의 카테고리 목록 가져오기
      * @param blog
      * @return
      */
@@ -59,7 +59,10 @@ public class CategoryService {
         return categoryRepository.findAllByBlog(blog);
     }
 
-
+    /**
+     * @title 카테고리 번호로 카테고리 삭제
+     * @param id
+     */
     public void deleteCategory(Long id){
         categoryRepository.deleteById(id);
     }

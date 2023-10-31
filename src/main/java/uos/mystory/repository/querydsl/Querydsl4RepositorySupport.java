@@ -48,6 +48,7 @@ public abstract class Querydsl4RepositorySupport<U,Q extends EntityPathBase<U>> 
     public void setQueryFactory(JPAQueryFactory jpaQueryFactory) {
         this.queryFactory = jpaQueryFactory;
     }
+
     protected JPAQueryFactory getQueryFactory() {
         return queryFactory;
     }
