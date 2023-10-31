@@ -17,7 +17,7 @@ import uos.mystory.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -27,7 +27,6 @@ public class UserService {
      * @return 유저 번호
      * @title 유저 회원가입
      */
-    @Transactional(readOnly = false)
     public Long saveUser(@NotNull InsertUserDTO insertUserDTO) {
         // 아이디 중복 체크
         validateUserIdDuplication(insertUserDTO.getUserId());
@@ -52,6 +51,7 @@ public class UserService {
      * @return 유저 엔티티
      * @title 유저 로그인
      */
+    @Transactional(readOnly = true)
     public User signIn(String userId, String userPw) {
         // 유저 아이디로 유저 엔티티 가져오기
         User user = getUserByUserId(userId);
@@ -67,7 +67,6 @@ public class UserService {
      * @return 유저 엔티티
      * @title 유저 정보 변경
      */
-    @Transactional(readOnly = false)
     public void updateUser(@NotNull UpdateUserDTO updateUserDTO) {
         User user = getUser(updateUserDTO.getId());
         user.update(updateUserDTO);
@@ -78,6 +77,7 @@ public class UserService {
      * @return 유저
      * @title 유저 번호로 유저 불러오기
      */
+    @Transactional(readOnly = true)
     public User getUser(Long id) {
         return userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.user")));
     }
@@ -87,6 +87,7 @@ public class UserService {
      * @return 유저
      * @title 유저 아이디로 유저 불러오기
      */
+    @Transactional(readOnly = true)
     public User getUserByUserId(String userId) {
         return userRepository.findByUserId(userId).orElseThrow(()->new ResourceNotFoundException(MessageManager.getMessage("error.notfound.user")));
     }
@@ -96,6 +97,7 @@ public class UserService {
      * @return 페이징된 유저 목록
      * @title 유저 번호로 유저 불러오기
      */
+    @Transactional(readOnly = true)
     public Page<User> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }

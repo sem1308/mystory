@@ -25,7 +25,7 @@ import uos.mystory.repository.querydsl.BlogQueryRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class BlogService {
     private final BlogRepository blogRepository;
     private final BlogQueryRepository blogQueryRepository;
@@ -36,7 +36,6 @@ public class BlogService {
      * @param insertBlogDTO
      * @return 블로그 번호
      */
-    @Transactional(readOnly = false)
     public Long saveBlog(@NotNull InsertBlogDTO insertBlogDTO) {
         // url 중복 체크
         validateUrlDuplication(insertBlogDTO.getUrl());
@@ -67,7 +66,6 @@ public class BlogService {
      * @param updateBlogDTO
      * @return
      */
-    @Transactional(readOnly = false)
     public void updateBlog(@NotNull UpdateBlogDTO updateBlogDTO) {
         Blog blog = getBlog(updateBlogDTO.getId());
         blog.update(updateBlogDTO);
@@ -78,6 +76,7 @@ public class BlogService {
      * @param id
      * @return 블로그 엔티티
      */
+    @Transactional(readOnly = true)
     public Blog getBlog(Long id) {
         return blogRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.blog")));
     }
@@ -87,7 +86,7 @@ public class BlogService {
      * @param id
      * @return 블로그 엔티티
      */
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     public Blog getBlogWhenVisit(Long id, VisitedPath path) {
         Blog blog = getBlog(id);
         // 블로그 방문수 증가
@@ -103,10 +102,12 @@ public class BlogService {
      * @return 블로그 엔티티 페이징 리스트
      */
     //TODO: Blog to BlogInfoDTO 교체
+    @Transactional(readOnly = true)
     public Page<Blog> getBlogs(Pageable pageable) {
         return blogRepository.findAll(pageable);
     }
 
+    @Transactional(readOnly = true)
     public Page<SelectBlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition, Pageable pageable) {
         return blogQueryRepository.findAll(blogSearchCondition, pageable);
     }
