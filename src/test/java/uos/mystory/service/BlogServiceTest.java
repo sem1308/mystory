@@ -17,6 +17,7 @@ import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
 import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.exception.DuplicateException;
+import uos.mystory.repository.BlogRepository;
 import uos.mystory.repository.UserRepository;
 import uos.mystory.repository.condition.BlogSearchCondition;
 
@@ -34,7 +35,7 @@ public class BlogServiceTest {
     @Autowired
     UserService userService;
     @Autowired
-    UserRepository userRepository;
+    BlogRepository blogRepository;
     User user;
 
     @BeforeEach
@@ -45,7 +46,8 @@ public class BlogServiceTest {
 
     @AfterEach
     public void clear() {
-        userRepository.delete(user);
+        blogRepository.deleteAll();
+        userService.deleteUser(user.getId());
     }
 
     @Test

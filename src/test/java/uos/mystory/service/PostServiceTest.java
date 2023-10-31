@@ -19,6 +19,8 @@ import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
+import uos.mystory.repository.PostHistoryRepository;
+import uos.mystory.repository.PostRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostServiceTest{
     @Autowired
     PostService postService;
-
+    @Autowired
+    PostRepository postRepository;
     @Autowired
     UserService userService;
 
@@ -53,9 +56,10 @@ class PostServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
-        blogService.deleteBlog(blog.getId());
+        postRepository.deleteAll();
         categoryService.deleteCategory(category.getId());
+        blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
 
 

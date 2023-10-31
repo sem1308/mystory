@@ -13,6 +13,7 @@ import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
 import uos.mystory.dto.mapping.insert.*;
 import uos.mystory.dto.mapping.update.UpdateCommentDTO;
+import uos.mystory.repository.CommentRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,6 +34,9 @@ class CommentServiceTest{
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    CommentRepository commentRepository;
 
     User user;
     Blog blog;
@@ -58,10 +62,11 @@ class CommentServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
-        blogService.deleteBlog(blog.getId());
-        categoryService.deleteCategory(category.getId());
+        commentRepository.deleteAll();
         postService.deletePost(post.getId());
+        categoryService.deleteCategory(category.getId());
+        blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
 
 

@@ -13,6 +13,7 @@ import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateCategoryDTO;
+import uos.mystory.repository.CategoryRepository;
 
 import java.util.List;
 
@@ -30,6 +31,9 @@ class CategoryServiceTest{
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
     User user;
     Blog blog;
 
@@ -43,8 +47,9 @@ class CategoryServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
+        categoryRepository.deleteAll();
         blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
 
     @Test
@@ -58,7 +63,7 @@ class CategoryServiceTest{
         Category category = categoryService.getCategory(id);
 
         //then
-        assertThrows(NullPointerException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             categoryService.saveCategory(categoryDTO);
         });
 

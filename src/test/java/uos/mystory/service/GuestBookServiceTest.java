@@ -14,6 +14,7 @@ import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertGuestBookDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.update.UpdateGuestBookDTO;
+import uos.mystory.repository.GuestBookRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class GuestBookServiceTest{
     @Autowired
     GuestBookService guestBookService;
+    @Autowired
+    GuestBookRepository guestBookRepository;
     @Autowired
     BlogService blogService;
     @Autowired
@@ -39,8 +42,9 @@ class GuestBookServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
+        guestBookRepository.deleteAll();
         blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
 
     @Test

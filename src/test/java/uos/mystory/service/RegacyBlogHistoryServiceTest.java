@@ -13,6 +13,7 @@ import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.mapping.select.SelectBlogHistoryDTO;
 import uos.mystory.dto.response.BlogHistoryInfoDTO;
+import uos.mystory.repository.BlogHistoryRepository;
 import uos.mystory.repository.condition.BlogHistorySearchCondition;
 import uos.mystory.service.regacy.RegacyBlogHistoryService;
 
@@ -26,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class RegacyBlogHistoryServiceTest{
     @Autowired
     RegacyBlogHistoryService blogHistoryService;
+    @Autowired
+    BlogHistoryRepository blogHistoryRepository;
     @Autowired
     UserService userService;
     @Autowired
@@ -46,10 +49,10 @@ class RegacyBlogHistoryServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
+        blogHistoryRepository.deleteAll();
         blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
-
 
     @Test
     public void 블로그_이력_가져오기() throws Exception {

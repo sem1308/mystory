@@ -20,7 +20,9 @@ import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
 import uos.mystory.dto.response.PostHistoryInfoDTO;
+import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.condition.PostHistorySearchCondition;
+import uos.mystory.repository.querydsl.regacy.RegacyPostHistoryQueryRepository;
 import uos.mystory.service.regacy.RegacyPostHistoryService;
 
 import java.time.LocalDate;
@@ -33,14 +35,13 @@ class PostHistoryServiceTest{
     @Autowired
     RegacyPostHistoryService postHistoryService;
     @Autowired
+    PostHistoryRepository postHistoryRepository;
+    @Autowired
     PostService postService;
-
     @Autowired
     UserService userService;
-
     @Autowired
     BlogService blogService;
-
     @Autowired
     CategoryService categoryService;
 
@@ -68,10 +69,11 @@ class PostHistoryServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
-        blogService.deleteBlog(blog.getId());
-        categoryService.deleteCategory(category.getId());
+        postHistoryRepository.deleteAll();
         postService.deletePost(post.getId());
+        categoryService.deleteCategory(category.getId());
+        blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
 
     @Test

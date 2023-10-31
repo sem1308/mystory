@@ -15,6 +15,7 @@ import uos.mystory.dto.mapping.select.SelectBlogHistoryDTO;
 import uos.mystory.dto.mapping.select.SelectHistoryDTO;
 import uos.mystory.dto.response.BlogHistoryInfoDTO;
 import uos.mystory.dto.response.HistoryInfoDTO;
+import uos.mystory.repository.BlogHistoryRepository;
 import uos.mystory.repository.UserRepository;
 import uos.mystory.repository.condition.BlogHistorySearchCondition;
 import uos.mystory.repository.condition.HistorySearchCondition;
@@ -37,6 +38,9 @@ class BlogHistoryServiceTest{
     @Autowired
     BlogHistoryService blogHistoryService;
 
+    @Autowired
+    BlogHistoryRepository blogHistoryRepository;
+
     User user;
     Blog blog;
 
@@ -50,8 +54,9 @@ class BlogHistoryServiceTest{
 
     @AfterEach
     public void clear() {
-        userService.deleteUser(user.getId());
+        blogHistoryRepository.deleteAll();
         blogService.deleteBlog(blog.getId());
+        userService.deleteUser(user.getId());
     }
 
 
