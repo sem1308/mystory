@@ -2,10 +2,13 @@ package uos.mystory.service;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.Blog;
 import uos.mystory.domain.Category;
@@ -18,10 +21,14 @@ import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.insert.InsertCategoryDTO;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
+import uos.mystory.dto.mapping.select.SelectPostInfoDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
 import uos.mystory.exception.ResourceNotFoundException;
-import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
+import uos.mystory.repository.condition.PostSearchCondition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -110,6 +117,73 @@ class PostServiceTest{
         assertEquals(updatedPost.getWriteType(),updatedWriteType);
         assertEquals(updatedPost.getOpenState(),updatedOpenState);
         System.out.println(updatedPost);
+    }
+
+    @Test
+    public void 전체_게시글_가져오기() throws Exception {
+        //given
+        String title = "첫 게시글";
+        String url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+        title = "두 번째 게시글";
+        url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO2 = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글2").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+        title = "세 번째 게시글";
+        url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO3 = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글3").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+
+        //when
+        postService.savePost(postDTO);
+        postService.savePost(postDTO2);
+        postService.savePost(postDTO3);
+
+        //when
+        List<Post> posts = postService.getPosts();
+
+        //then
+        assertEquals(3, posts.size());
+    }
+
+    @Test
+    public void 조건에_따른_게시글_가져오기() throws Exception {
+        //given
+        String title = "첫 게시글";
+        String url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+        title = "두 번째 게시글";
+        url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO2 = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글2").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+        title = "세 번째 게시글";
+        url = blog.getUrl()+"/"+title.replace(" ", "-");
+        InsertPostDTO postDTO3 = InsertPostDTO.builder().postType(PostType.POST).writeType(WriteType.BASIC).openState(OpenState.CLOSE)
+                .title(title).content("그냥 끄적이는 글3").url(url).titleImgPath(null).user(user).category(category).blog(blog).build();
+
+        //when
+        postService.savePost(postDTO);
+        postService.savePost(postDTO2);
+        postService.savePost(postDTO3);
+
+        PostSearchCondition postSearchCondition = new PostSearchCondition(blog.getId());
+
+        int page = 0;
+        int size = 2;
+        int totalElements = 3;
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(Sort.Order.desc("title"));
+        Sort sort = Sort.by(orders);
+        Pageable pageable = PageRequest.of(page, size,sort);
+        //when
+        Page<SelectPostInfoDTO> postInfoDTOS = postService.getPostsgetBlogsByContidion(postSearchCondition, pageable);
+
+        //then
+        assertEquals(totalElements, postInfoDTOS.getTotalElements());
+        assertEquals(totalPages, postInfoDTOS.getTotalPages());
     }
 
     @Test
