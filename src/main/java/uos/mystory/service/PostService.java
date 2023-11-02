@@ -86,6 +86,15 @@ public class PostService {
     }
 
     /**
+     * @Title 전체 게시글 목록 가져오기
+     * @return 게시글 목록
+     */
+    @Transactional(readOnly = true)
+    public List<Post> getPosts() {
+        return postRepository.findAll();
+    }
+
+    /**
      * @title 게시글 번호로 게시글 엔티티 가져오기 (게시글을 방문 한 경우)
      * @param id
      * @return 게시글 엔티티
