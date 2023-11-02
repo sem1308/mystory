@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import uos.mystory.domain.Post;
-import uos.mystory.domain.QBlog;
 import uos.mystory.domain.QPost;
 import uos.mystory.dto.mapping.select.QSelectPostInfoDTO;
 import uos.mystory.dto.mapping.select.SelectPostInfoDTO;
 import uos.mystory.repository.condition.PostSearchCondition;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static uos.mystory.domain.QPost.post;
@@ -70,6 +70,6 @@ public class PostQueryRepository extends Querydsl4RepositorySupport<Post, QPost>
     }
 
     private BooleanExpression blogIdEq(Long blogId) {
-        return blogId != null ?  QBlog.blog.id.eq(blogId) :null;
+        return blogId != null ?  post.blog.id.eq(blogId) :null;
     }
 }
