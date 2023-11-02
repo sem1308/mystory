@@ -108,6 +108,12 @@ public class PostService {
         return post;
     }
 
+    /**
+     * @title 조건에 따른 게시글 목록 페이지 가져오기
+     * @param postSearchCondition
+     * @param pageable
+     * @return 게시글 목록 페이지
+     */
     @Transactional(readOnly = true)
     public Page<SelectPostInfoDTO> getPostsgetBlogsByContidion(PostSearchCondition postSearchCondition, Pageable pageable) {
         return postQueryRepository.findAll(postSearchCondition, pageable);
