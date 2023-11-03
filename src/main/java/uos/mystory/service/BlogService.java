@@ -119,6 +119,11 @@ public class BlogService {
         return blogQueryRepository.findAll(blogSearchCondition, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public List<SelectBlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition) {
+        return blogQueryRepository.findAll(blogSearchCondition);
+    }
+
     /**
      * @title 블로그 번호로 블로그 삭제
      * @param blogId
