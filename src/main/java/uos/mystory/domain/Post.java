@@ -109,6 +109,14 @@ public class Post {
         this.hearts += 1;
     }
 
+    /**
+     * 공감 버튼 해제 시 공감수 1 감소
+     */
+    public void removeHearts() {
+        this.hearts -= 1;
+    }
+
+    // print
     public String toString() {
         return "[postType] : "+postType.toString()+", [title] : "+title+", [content] : "+content+", [writeType] : "+writeType.toString()
                 +", [openState] : "+openState.toString()+", [url] : "+url+", [titleImgPath] : "+titleImgPath+", [user] : "+user.getUserId()
