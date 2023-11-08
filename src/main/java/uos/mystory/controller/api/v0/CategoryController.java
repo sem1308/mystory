@@ -15,7 +15,7 @@ import uos.mystory.service.CategoryService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v0/category")
+@RequestMapping("/api/v0/categories")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
