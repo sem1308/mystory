@@ -6,23 +6,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uos.mystory.domain.Blog;
 import uos.mystory.domain.Post;
-import uos.mystory.domain.User;
 import uos.mystory.domain.enums.VisitedPath;
 import uos.mystory.domain.history.PostHistory;
 import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertPostHistoryDTO;
-import uos.mystory.dto.mapping.select.SelectBlogInfoDTO;
 import uos.mystory.dto.mapping.select.SelectPostInfoDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
 import uos.mystory.exception.DuplicateException;
-import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
-import uos.mystory.repository.condition.BlogSearchCondition;
 import uos.mystory.repository.condition.PostSearchCondition;
 import uos.mystory.repository.querydsl.PostQueryRepository;
 
@@ -44,18 +39,12 @@ public class PostService {
     public Long savePost(@NotNull InsertPostDTO insertPostDTO) {
         // url 중복 체크
         validateUrlDuplication(insertPostDTO.getUrl());
-        // 글 쓴 user가 blog를 생성한 user인지 체크
-        validateBlogOwner(insertPostDTO.getBlog(), insertPostDTO.getUser());
-
         Post post = Post.create(insertPostDTO);
 
-        return postRepository.save(post).getId();
-    }
+        // 글쓴이와 블로그 생성자 일치 확인
+        post.getBlog().validateOwner(insertPostDTO.getUser());
 
-    private void validateBlogOwner(@NotNull Blog blog,@NotNull User user) {
-        if (!blog.getUser().equals(user)) {
-            throw new MismatchException(MessageManager.getMessage("error.mismatch.blog.user"));
-        }
+        return postRepository.save(post).getId();
     }
 
     private void validateUrlDuplication(String url) {
