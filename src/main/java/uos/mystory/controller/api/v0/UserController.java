@@ -13,7 +13,7 @@ import uos.mystory.dto.response.ResponseUserDTO;
 import uos.mystory.service.UserService;
 
 @RestController()
-@RequestMapping("/users")
+@RequestMapping("/api/v0/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
