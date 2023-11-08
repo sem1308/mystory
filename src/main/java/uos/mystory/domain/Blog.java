@@ -3,9 +3,11 @@ package uos.mystory.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 import uos.mystory.dto.mapping.insert.InsertBlogDTO;
 import uos.mystory.dto.mapping.update.UpdateBlogDTO;
+import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.massage.MessageManager;
 
 import java.util.Optional;
@@ -61,6 +63,16 @@ public class Blog {
      */
     public void addVisits() {
         this.visits += 1;
+    }
+
+    //==검증 로직==//
+    /**
+     * 글쓴이 와 블로그 생성자 일치 확인
+     */
+    public void validateOwner(@NotNull User user) {
+        if (!this.user.equals(user)) {
+            throw new MismatchException(MessageManager.getMessage("error.mismatch.blog.user"));
+        }
     }
 
     public String toString() {
