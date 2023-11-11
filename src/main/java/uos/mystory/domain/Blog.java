@@ -10,6 +10,7 @@ import uos.mystory.dto.mapping.update.UpdateBlogDTO;
 import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.massage.MessageManager;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Entity
@@ -34,6 +35,8 @@ public class Blog {
     @ColumnDefault("0")
     private Integer visits;
 
+    private LocalDateTime createdDateTime;
+
     /**
      * 연관 관계 매핑
      */
@@ -46,7 +49,7 @@ public class Blog {
         Assert.notNull(insertBlogDTO.getUser(), MessageManager.getMessage("error.null",User.class));
 
         return new BlogBuilder().name(insertBlogDTO.getName()).url(insertBlogDTO.getUrl())
-                .description(insertBlogDTO.getDescription()).visits(0).user(insertBlogDTO.getUser()).build();
+                .description(insertBlogDTO.getDescription()).visits(0).createdDateTime(LocalDateTime.now()).user(insertBlogDTO.getUser()).build();
     }
 
     //==변경 메소드==//
