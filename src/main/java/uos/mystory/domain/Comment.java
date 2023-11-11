@@ -11,7 +11,7 @@ import uos.mystory.exception.massage.MessageManager;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@Entity
+@Entity(name = "comments")
 @Getter
 @Builder(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +26,8 @@ public class Comment {
     @Column(length = 500)
     private String content;
 
+    private LocalDateTime latestUpdatedDateTime;
+
     private LocalDateTime createdDateTime;
 
     /**
@@ -39,12 +41,18 @@ public class Comment {
     public static Comment create(@NotNull InsertCommentDTO insertCommentDTO){
         Assert.notNull(insertCommentDTO.getPost(), MessageManager.getMessage("error.null",Post.class));
 
-        return new CommentBuilder().content(insertCommentDTO.getContent()).createdDateTime(LocalDateTime.now()).post(insertCommentDTO.getPost()).build();
+        return builder()
+                .content(insertCommentDTO.getContent())
+                .latestUpdatedDateTime(LocalDateTime.now())
+                .createdDateTime(LocalDateTime.now())
+                .post(insertCommentDTO.getPost())
+                .build();
     }
 
     //==변경 메소드==//
     public void update(@NotNull UpdateCommentDTO updateCommentDTO){
         this.content = Optional.ofNullable(updateCommentDTO.getContent()).orElse(this.content);
+        this.latestUpdatedDateTime = LocalDateTime.now();
     }
 
     public String toString() {
