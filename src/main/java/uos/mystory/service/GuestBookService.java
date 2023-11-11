@@ -2,20 +2,26 @@ package uos.mystory.service;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.GuestBook;
 import uos.mystory.dto.mapping.insert.InsertGuestBookDTO;
+import uos.mystory.dto.mapping.select.SelectGuestBookInfoDTO;
 import uos.mystory.dto.mapping.update.UpdateGuestBookDTO;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.GuestBookRepository;
+import uos.mystory.repository.condition.GuestBookSearchCondition;
+import uos.mystory.repository.querydsl.GuestBookQueryRepository;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class GuestBookService {
     private final GuestBookRepository guestBookRepository;
+    private final GuestBookQueryRepository guestBookQueryRepository;
 
     /**
      * @title 방명록 저장
@@ -44,6 +50,15 @@ public class GuestBookService {
     @Transactional(readOnly = true)
     public GuestBook getGuestBook(Long id) {
         return guestBookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
+    }
+
+    @Transactional(readOnly = true)
+    public SelectGuestBookInfoDTO getGuestBookInfo(Long id) {
+        return guestBookQueryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
+    }
+
+    public Page<SelectGuestBookInfoDTO> getGuestBooksByContidion(GuestBookSearchCondition condition, Pageable pageable){
+        return guestBookQueryRepository.findAll(condition,pageable);
     }
 
     /**
