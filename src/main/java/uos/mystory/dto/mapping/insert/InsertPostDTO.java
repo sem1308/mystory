@@ -1,6 +1,5 @@
 package uos.mystory.dto.mapping.insert;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import uos.mystory.domain.Blog;
@@ -9,6 +8,7 @@ import uos.mystory.domain.User;
 import uos.mystory.domain.enums.OpenState;
 import uos.mystory.domain.enums.PostType;
 import uos.mystory.domain.enums.WriteType;
+import uos.mystory.dto.request.create.CreatePostDTO;
 
 @Getter
 @Builder
@@ -35,4 +35,19 @@ public class InsertPostDTO {
     private Category category;
 
     private Blog blog;
+
+    public static InsertPostDTO of(CreatePostDTO postDTO, User user, Blog blog, Category category){
+        return InsertPostDTO.builder()
+                .postType(postDTO.postType())
+                .writeType(postDTO.writeType())
+                .openState(postDTO.openState())
+                .title(postDTO.title())
+                .content(postDTO.content())
+                .url(postDTO.url())
+                .titleImgPath(postDTO.titleImgPath())
+                .user(user)
+                .category(category)
+                .blog(blog)
+                .build();
+    }
 }

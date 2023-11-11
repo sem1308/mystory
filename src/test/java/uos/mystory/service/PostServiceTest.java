@@ -179,7 +179,7 @@ class PostServiceTest{
         Sort sort = Sort.by(orders);
         Pageable pageable = PageRequest.of(page, size,sort);
         //when
-        Page<SelectPostInfoDTO> postInfoDTOS = postService.getPostsgetBlogsByContidion(postSearchCondition, pageable);
+        Page<SelectPostInfoDTO> postInfoDTOS = postService.getPostsByContidion(postSearchCondition, pageable);
 
         //then
         assertEquals(totalElements, postInfoDTOS.getTotalElements());

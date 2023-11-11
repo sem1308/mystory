@@ -20,7 +20,7 @@ public record SelectPostInfoDTO(
         Integer hearts,
         Integer visits,
         LocalDateTime createdDateTime,
-        Category category
+        SelectCategoryInfoDTO category
 ) {
     @QueryProjection
     public SelectPostInfoDTO {}

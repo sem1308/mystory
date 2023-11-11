@@ -13,6 +13,7 @@ import uos.mystory.dto.mapping.insert.InsertPostDTO;
 import uos.mystory.dto.mapping.insert.InsertPostHistoryDTO;
 import uos.mystory.dto.mapping.select.SelectPostInfoDTO;
 import uos.mystory.dto.mapping.update.UpdatePostDTO;
+import uos.mystory.dto.response.ResponsePostDTO;
 import uos.mystory.exception.DuplicateException;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
@@ -74,6 +75,12 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
     }
 
+    @Transactional(readOnly = true)
+    public SelectPostInfoDTO getPostInfo(Long id) {
+        return postQueryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
+    }
+
+
     /**
      * @Title 전체 게시글 목록 가져오기
      * @return 게시글 목록
@@ -88,13 +95,13 @@ public class PostService {
      * @param id
      * @return 게시글 엔티티
      */
-    public Post getPostWhenVisit(Long id, VisitedPath path) {
+    public ResponsePostDTO getPostWhenVisit(Long id, VisitedPath path) {
         Post post = getPost(id);
         // 게시글 방문수 증가
         post.addVisits();
         // 게시글 방문 이력 생성
         postHistoryRepository.save(PostHistory.create(InsertPostHistoryDTO.builder().post(post).path(path).build()));
-        return post;
+        return ResponsePostDTO.of(post);
     }
 
     /**
@@ -104,7 +111,7 @@ public class PostService {
      * @return 게시글 목록 페이지
      */
     @Transactional(readOnly = true)
-    public Page<SelectPostInfoDTO> getPostsgetBlogsByContidion(PostSearchCondition postSearchCondition, Pageable pageable) {
+    public Page<SelectPostInfoDTO> getPostsByContidion(PostSearchCondition postSearchCondition, Pageable pageable) {
         return postQueryRepository.findAll(postSearchCondition, pageable);
     }
 

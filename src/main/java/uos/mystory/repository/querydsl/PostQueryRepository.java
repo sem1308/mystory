@@ -7,12 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import uos.mystory.domain.Post;
 import uos.mystory.domain.QPost;
+import uos.mystory.dto.mapping.select.QSelectCategoryInfoDTO;
 import uos.mystory.dto.mapping.select.QSelectPostInfoDTO;
 import uos.mystory.dto.mapping.select.SelectPostInfoDTO;
 import uos.mystory.repository.condition.PostSearchCondition;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static uos.mystory.domain.QPost.post;
 
@@ -38,7 +40,10 @@ public class PostQueryRepository extends Querydsl4RepositorySupport<Post, QPost>
                         post.hearts,
                         post.visits,
                         post.createdDateTime,
-                        post.category
+                        new QSelectCategoryInfoDTO(
+                                post.category.id,
+                                post.category.name
+                        )
                 ))
                         .from(post)
                         .where(
@@ -60,7 +65,10 @@ public class PostQueryRepository extends Querydsl4RepositorySupport<Post, QPost>
                     post.hearts,
                     post.visits,
                     post.createdDateTime,
-                    post.category
+                    new QSelectCategoryInfoDTO(
+                            post.category.id,
+                            post.category.name
+                    )
                 ))
                 .from(post)
                 .where(
@@ -69,7 +77,38 @@ public class PostQueryRepository extends Querydsl4RepositorySupport<Post, QPost>
                 .fetch();
     }
 
+    public Optional<SelectPostInfoDTO> findById(Long postId) {
+        //== 자동 countQuery 생성 방법==//
+        return Optional.ofNullable(
+                select(new QSelectPostInfoDTO(
+                        post.id,
+                        post.postType,
+                        post.writeType,
+                        post.openState,
+                        post.title,
+                        post.content,
+                        post.url,
+                        post.titleImgPath,
+                        post.hearts,
+                        post.visits,
+                        post.createdDateTime,
+                        new QSelectCategoryInfoDTO(
+                                post.category.id,
+                                post.category.name
+                        )
+                ))
+                .from(post)
+                .where(
+                        post.id.eq(postId)
+                )
+                .fetchOne());
+    }
+
+
     private BooleanExpression blogIdEq(Long blogId) {
         return blogId != null ?  post.blog.id.eq(blogId) :null;
+    }
+    private BooleanExpression postIdEq(Long postId) {
+        return postId != null ?  post.id.eq(postId) :null;
     }
 }
