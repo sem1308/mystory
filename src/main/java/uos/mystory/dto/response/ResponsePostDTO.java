@@ -1,7 +1,6 @@
 package uos.mystory.dto.response;
 
 import lombok.Getter;
-import uos.mystory.domain.Category;
 import uos.mystory.domain.Post;
 import uos.mystory.domain.enums.OpenState;
 import uos.mystory.domain.enums.PostType;
