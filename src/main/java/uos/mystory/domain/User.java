@@ -9,7 +9,7 @@ import uos.mystory.dto.mapping.update.UpdateUserDTO;
 import uos.mystory.exception.MismatchException;
 import uos.mystory.exception.massage.MessageManager;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Entity(name = "users") // user가 DB에서 예약어인 경우가 있어 users로 table 이름 변경
@@ -42,13 +42,13 @@ public class User {
     private UserRole role;
 
     @Column(nullable = false)
-    private LocalDate createdDate;
+    private LocalDateTime createdDateTime;
 
     //==생성 메소드==//
     public static User create(InsertUserDTO insertUserDTO){
         return new UserBuilder().userId(insertUserDTO.getUserId()).userPw(insertUserDTO.getUserPw())
                 .nickname(insertUserDTO.getNickname()).phoneNum(insertUserDTO.getPhoneNum())
-                .role(UserRole.M).maxNumBlog(5).createdDate(LocalDate.now()).build();
+                .role(UserRole.M).maxNumBlog(5).createdDateTime(LocalDateTime.now()).build();
     }
 
     //==변경 메소드==//
