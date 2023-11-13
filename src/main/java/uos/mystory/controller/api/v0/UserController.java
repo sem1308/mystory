@@ -1,7 +1,13 @@
 package uos.mystory.controller.api.v0;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import uos.mystory.domain.User;
 import uos.mystory.dto.mapping.insert.InsertUserDTO;
@@ -11,12 +17,16 @@ import uos.mystory.dto.request.create.CreateUserDTO;
 import uos.mystory.dto.request.fix.FixUserDTO;
 import uos.mystory.dto.response.ResponseUserDTO;
 import uos.mystory.service.UserService;
+import uos.mystory.utils.jwt.JwtFilter;
+import uos.mystory.utils.jwt.TokenProvider;
 
 @RestController()
 @RequestMapping("/api/v0/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final TokenProvider tokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @GetMapping("/{user_id}")
     public ResponseEntity<ResponseUserDTO> getUser(@PathVariable("user_id") Long userId){
@@ -36,12 +46,38 @@ public class UserController {
 
     @PostMapping("/sign_in")
     public ResponseEntity<String> signIn(@RequestBody SignInUserForm form){
-        User user = userService.signIn(form.userId(), form.userPw());
-        // TODO: JWT 토큰 반환
-        String token = "token";
-        return ResponseEntity.ok(token);
-    }
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(form.userId(), form.userPw());
 
+        // authenticate 메소드가 실행이 될 때 AuthenticationManager가 루프를 돌며 AuthenticationProvier 호출
+        // AuthenticationProvier가 UsernamePasswordAuthenticationToken를 support한다면 인증 진행
+        // JWT 토큰 인증시 UsernamePasswordAuthenticationToken 인증 처리하는 AbstractUserDetailsAuthenticationProvider가 호출
+        // (정확히는 AbstractUserDetailsAuthenticationProvider를 상속하고 있는 DaoAuthenticationProvider 호출)
+        // 이 Provider는 다음과 같은 UsernamePasswordAuthenticationToken를 지원한다는 supports함수를 가지고 있음
+        //
+        //        @Override
+        //        public boolean supports(Class<?> authentication) {
+        //            return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+        //        }
+        //
+        // == 인증 ==
+        // CustomUserDetailsService class의 loadUserByUsername 메소드가 실행되어 DB에 저장된 user entity를 불러옴
+        // user entity의 userPW와 입력받은 form의 userPW를 비교
+        // 비밀번호가 다르다면 BadCredentialsException 발생
+        // 비밀번호가 맞으면 인증된 Authentication 객체 반환
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        // 해당 객체를 SecurityContextHolder에 저장하고
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // authentication 객체를 createToken 메소드를 통해서 JWT Token을 생성
+        String jwt = tokenProvider.createToken(authentication);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        // response header에 jwt token에 넣어줌
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
+
+        // jwt를 response body에 넣어서 리턴
+        return new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK);
+    }
     @PutMapping()
     public ResponseEntity<String> updateUserInfo(@RequestBody FixUserDTO userDTO){
         UpdateUserDTO updateUserDTO = UpdateUserDTO.builder()

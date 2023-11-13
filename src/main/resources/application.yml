@@ -13,3 +13,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         #        show_sql : true # sout?? ??
         # format_sql: true # ??? ?? ?? ??
+
+jwt:
+  secret : mystory1308happydevmystory1308happydevmystory1308happydevs
+  token-validity-in-seconds: 3600

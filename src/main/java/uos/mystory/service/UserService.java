@@ -51,6 +51,7 @@ public class UserService {
      * @param userId, userPw
      * @return 유저 엔티티
      */
+    @Deprecated(since = "JWT 인증방식에 의해 사용 중지")
     @Transactional(readOnly = true)
     public User signIn(String userId, String userPw) {
         // 유저 아이디로 유저 엔티티 가져오기
