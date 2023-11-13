@@ -41,7 +41,7 @@ public class BlogHistoryQueryRepository extends Querydsl4RepositorySupport<BlogH
         ))
                 .from(blogHistory)
                 .where(
-                        blogIdEq(condition.id()),
+                        blogHistory.blog.id.eq(condition.id()),
                         dateBetween(condition.from(), condition.to())
                         )
                 .groupBy(blogHistory.createdDate, blogHistory.path)

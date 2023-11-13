@@ -19,7 +19,7 @@ public class PostHistoryQueryRepository extends Querydsl4RepositorySupport<PostH
         super(PostHistory.class, postHistory);
     }
 
-    public List<SelectHistoryDTO> findAllByPostIdGroupByDateAndVisitedPath(Long blogId) {
+    public List<SelectHistoryDTO> findAllByPostIdGroupByDateAndVisitedPath(Long postId) {
         return select(new QSelectHistoryDTO(
                         postHistory.post.id,
                         postHistory.createdDate,
@@ -27,7 +27,7 @@ public class PostHistoryQueryRepository extends Querydsl4RepositorySupport<PostH
                         postHistory.count()
                 ))
                 .from(postHistory)
-                .where(postHistory.post.id.eq(blogId))
+                .where(postHistory.post.id.eq(postId))
                 .groupBy(postHistory.createdDate, postHistory.path)
                 .fetch();
     }
@@ -41,17 +41,17 @@ public class PostHistoryQueryRepository extends Querydsl4RepositorySupport<PostH
         ))
                 .from(postHistory)
                 .where(
-                        postIdEq(condition.id()),
+                        postHistory.post.id.eq(condition.id()),
                         dateBetween(condition.from(), condition.to())
                         )
                 .groupBy(postHistory.createdDate, postHistory.path)
                 .fetch();
     }
 
-    public List<SelectHistoryVisitsDTO> getVisitsByBlogGroupByDate(Long blogId) {
+    public List<SelectHistoryVisitsDTO> getVisitsByBlogGroupByDate(Long postId) {
         return select(new QSelectHistoryVisitsDTO(postHistory.createdDate, postHistory.count()))
                 .from(postHistory)
-                .where(postHistory.post.id.eq(blogId))
+                .where(postHistory.post.id.eq(postId))
                 .groupBy(postHistory.createdDate)
                 .fetch();
     }
