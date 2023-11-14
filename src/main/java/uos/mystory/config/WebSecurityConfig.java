@@ -14,14 +14,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import uos.mystory.utils.jwt.JwtAccessDeniedHandler;
 import uos.mystory.utils.jwt.JwtAuthenticationEntryPoint;
 import uos.mystory.utils.jwt.JwtFilter;
-import uos.mystory.utils.jwt.TokenProvider;
+import uos.mystory.utils.jwt.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final TokenProvider tokenProvider;
+    private final JwtTokenProvider tokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 

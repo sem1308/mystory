@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CustomUserDetail implements UserDetails{
+public class JwtUserDetail implements UserDetails{
         @Getter
         private final Long id;
 
@@ -36,12 +36,12 @@ public class CustomUserDetail implements UserDetails{
 
         private final boolean enabled;
 
-        public CustomUserDetail(Long id, String userId, String userPw, String nickname, Integer maxNumBlog, Collection<? extends GrantedAuthority> authorities) {
+        public JwtUserDetail(Long id, String userId, String userPw, String nickname, Integer maxNumBlog, Collection<? extends GrantedAuthority> authorities) {
                 this(id, userId, userPw, nickname, maxNumBlog, true, true, true, true, authorities);
         }
 
-        public CustomUserDetail(Long id, String userId, String userPw, String nickname, Integer maxNumBlog, boolean enabled, boolean accountNonExpired,
-                                boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+        public JwtUserDetail(Long id, String userId, String userPw, String nickname, Integer maxNumBlog, boolean enabled, boolean accountNonExpired,
+                             boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
                 Assert.isTrue(userId != null && !userId.isEmpty() && userPw != null,
                         "Cannot pass null or empty values to constructor");
                 this.id = id;
@@ -53,7 +53,7 @@ public class CustomUserDetail implements UserDetails{
                 this.accountNonExpired = accountNonExpired;
                 this.credentialsNonExpired = credentialsNonExpired;
                 this.accountNonLocked = accountNonLocked;
-                this.authorities = Collections.unmodifiableSet(toSet(authorities));
+                this.authorities = toSet(authorities);
         }
 
         private static HashSet<GrantedAuthority> toSet(Collection<? extends GrantedAuthority> authorities) {

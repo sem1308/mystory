@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class TokenProvider implements InitializingBean {
+public class JwtTokenProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String USER_KEY = "user";
@@ -29,7 +29,7 @@ public class TokenProvider implements InitializingBean {
     private final long tokenValidityInMilliseconds;
     private Key key;
 
-    public TokenProvider(
+    public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
         this.secret = secret;
@@ -53,7 +53,7 @@ public class TokenProvider implements InitializingBean {
         long now = (new Date()).getTime();
         Date validity = new Date(now + this.tokenValidityInMilliseconds);
 
-        CustomUserDetail principal = (CustomUserDetail)authentication.getPrincipal();
+        JwtUserDetail principal = (JwtUserDetail)authentication.getPrincipal();
         ResponseUserAuthDTO userDTO = new ResponseUserAuthDTO(principal.getId(),principal.getNickname(),principal.getMaxNumBlog());
 
         return Jwts.builder()

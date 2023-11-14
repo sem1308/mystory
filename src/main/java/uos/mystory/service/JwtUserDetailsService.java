@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uos.mystory.domain.User;
 import uos.mystory.repository.UserRepository;
-import uos.mystory.utils.jwt.CustomUserDetail;
+import uos.mystory.utils.jwt.JwtUserDetail;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("userDetailsService")
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
@@ -28,8 +28,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(userId + " -> 데이터베이스에서 찾을 수 없습니다.")));
     }
 
-    private CustomUserDetail createUser(User user) {
+    private JwtUserDetail createUser(User user) {
         //TODO: 회원탈퇴된 유저 처리
+
+        // 권한 생성
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
 
@@ -38,6 +40,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 //                .map(authority -> new SimpleGrantedAuthority(authority.getAuthorityName()))
 //                .collect(Collectors.toList());
 
-        return new CustomUserDetail(user.getId(), user.getUserId(), user.getUserPw(), user.getNickname(), user.getMaxNumBlog(), grantedAuthorities);
+        return new JwtUserDetail(user.getId(), user.getUserId(), user.getUserPw(), user.getNickname(), user.getMaxNumBlog(), grantedAuthorities);
     }
 }
