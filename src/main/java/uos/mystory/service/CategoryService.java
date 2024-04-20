@@ -12,7 +12,7 @@ import uos.mystory.dto.mapping.update.UpdateCategoryDTO;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.CategoryRepository;
-import uos.mystory.repository.querydsl.CategoryQueryRepository;
+import uos.mystory.repository.querydsl.CategoryQueryRepositoryImpl;
 
 import java.util.List;
 
@@ -21,7 +21,6 @@ import java.util.List;
 @Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final CategoryQueryRepository categoryQueryRepository;
 
     /**
      * @title 특정 블로그의 카테고리 생성
@@ -69,9 +68,8 @@ public class CategoryService {
      */
     @Transactional(readOnly = true)
     public List<SelectCategoryInfoDTO> getCategoryInfosByBlog(Blog blog) {
-        return categoryQueryRepository.findAll(blog.getId());
+        return categoryRepository.findAll(blog.getId());
     }
-
 
     /**
      * @title 카테고리 번호로 카테고리 삭제

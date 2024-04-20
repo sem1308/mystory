@@ -14,14 +14,13 @@ import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.GuestBookRepository;
 import uos.mystory.repository.condition.GuestBookSearchCondition;
-import uos.mystory.repository.querydsl.GuestBookQueryRepository;
+import uos.mystory.repository.querydsl.GuestBookQueryRepositoryImpl;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class GuestBookService {
     private final GuestBookRepository guestBookRepository;
-    private final GuestBookQueryRepository guestBookQueryRepository;
 
     /**
      * @title 방명록 저장
@@ -54,11 +53,11 @@ public class GuestBookService {
 
     @Transactional(readOnly = true)
     public SelectGuestBookInfoDTO getGuestBookInfo(Long id) {
-        return guestBookQueryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
+        return guestBookRepository.findDtoById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.guest_book")));
     }
 
     public Page<SelectGuestBookInfoDTO> getGuestBooksByContidion(GuestBookSearchCondition condition, Pageable pageable){
-        return guestBookQueryRepository.findAll(condition,pageable);
+        return guestBookRepository.findAll(condition,pageable);
     }
 
     /**

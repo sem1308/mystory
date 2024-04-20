@@ -21,7 +21,7 @@ import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.BlogHistoryRepository;
 import uos.mystory.repository.BlogRepository;
 import uos.mystory.repository.condition.BlogSearchCondition;
-import uos.mystory.repository.querydsl.BlogQueryRepository;
+import uos.mystory.repository.querydsl.BlogQueryRepositoryImpl;
 
 import java.util.List;
 
@@ -30,7 +30,6 @@ import java.util.List;
 @Transactional
 public class BlogService {
     private final BlogRepository blogRepository;
-    private final BlogQueryRepository blogQueryRepository;
     private final BlogHistoryRepository blogHistoryRepository;
 
     /**
@@ -116,12 +115,12 @@ public class BlogService {
      */
     @Transactional(readOnly = true)
     public Page<SelectBlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition, Pageable pageable) {
-        return blogQueryRepository.findAll(blogSearchCondition, pageable);
+        return blogRepository.findAll(blogSearchCondition, pageable);
     }
 
     @Transactional(readOnly = true)
     public List<SelectBlogInfoDTO> getBlogsByContidion(BlogSearchCondition blogSearchCondition) {
-        return blogQueryRepository.findAll(blogSearchCondition);
+        return blogRepository.findAll(blogSearchCondition);
     }
 
     /**

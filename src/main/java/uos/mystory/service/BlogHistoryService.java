@@ -7,7 +7,7 @@ import uos.mystory.dto.mapping.select.SelectHistoryDTO;
 import uos.mystory.dto.response.HistoryInfoDTO;
 import uos.mystory.repository.BlogHistoryRepository;
 import uos.mystory.repository.condition.HistorySearchCondition;
-import uos.mystory.repository.querydsl.BlogHistoryQueryRepository;
+import uos.mystory.repository.querydsl.BlogHistoryQueryRepositoryImpl;
 
 import java.util.List;
 
@@ -16,7 +16,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class BlogHistoryService implements HistoryService{
     private final BlogHistoryRepository blogHistoryRepository;
-    private final BlogHistoryQueryRepository blogHistoryQueryRepository;
 
     /**
      * @title 블로그 번호로 블로그 이력 얻기
@@ -24,7 +23,7 @@ public class BlogHistoryService implements HistoryService{
      * @return 블로그 이력 DTO
      */
     public List<SelectHistoryDTO> getHistoryInfoDTOs(Long blogId) {
-        return blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
+        return blogHistoryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
     }
 
     /**
@@ -33,7 +32,7 @@ public class BlogHistoryService implements HistoryService{
      * @return 정리된 블로그 이력
      */
     public HistoryInfoDTO getHistories(Long blogId) {
-        List<SelectHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
+        List<SelectHistoryDTO> selectBlogHistoryDTOS = blogHistoryRepository.findAllByBlogIdGroupByDateAndVisitedPath(blogId);
         return HistoryInfoDTO.of(blogId, selectBlogHistoryDTOS);
     }
 
@@ -43,7 +42,7 @@ public class BlogHistoryService implements HistoryService{
      * @return 정리된 블로그 이력
      */
     public HistoryInfoDTO getHistories(HistorySearchCondition condition) {
-        List<SelectHistoryDTO> selectBlogHistoryDTOS = blogHistoryQueryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
+        List<SelectHistoryDTO> selectBlogHistoryDTOS = blogHistoryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
         return HistoryInfoDTO.of(condition.id(), selectBlogHistoryDTOS);
     }
 }

@@ -20,7 +20,7 @@ import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.PostRepository;
 import uos.mystory.repository.condition.PostSearchCondition;
-import uos.mystory.repository.querydsl.PostQueryRepository;
+import uos.mystory.repository.querydsl.PostQueryRepositoryImpl;
 
 import java.util.List;
 
@@ -30,7 +30,6 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final PostHistoryRepository postHistoryRepository;
-    private final PostQueryRepository postQueryRepository;
 
     /**
      * @title 게시글 등록
@@ -77,7 +76,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public SelectPostInfoDTO getPostInfo(Long id) {
-        return postQueryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
+        return postRepository.findDtoById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.post")));
     }
 
 
@@ -112,7 +111,7 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public Page<SelectPostInfoDTO> getPostsByContidion(PostSearchCondition postSearchCondition, Pageable pageable) {
-        return postQueryRepository.findAll(postSearchCondition, pageable);
+        return postRepository.findAll(postSearchCondition, pageable);
     }
 
     /**

@@ -7,7 +7,7 @@ import uos.mystory.dto.mapping.select.SelectHistoryDTO;
 import uos.mystory.dto.response.HistoryInfoDTO;
 import uos.mystory.repository.PostHistoryRepository;
 import uos.mystory.repository.condition.HistorySearchCondition;
-import uos.mystory.repository.querydsl.PostHistoryQueryRepository;
+import uos.mystory.repository.querydsl.PostHistoryQueryRepositoryImpl;
 
 import java.util.List;
 
@@ -16,7 +16,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PostHistoryService implements HistoryService{
     private final PostHistoryRepository postHistoryRepository;
-    private final PostHistoryQueryRepository postHistoryQueryRepository;
 
     /**
      * @title 게시글 번호로 게시글 이력 얻기
@@ -25,7 +24,7 @@ public class PostHistoryService implements HistoryService{
      */
     @Override
     public List<SelectHistoryDTO> getHistoryInfoDTOs(Long postId) {
-        return postHistoryQueryRepository.findAllByPostIdGroupByDateAndVisitedPath(postId);
+        return postHistoryRepository.findAllByPostIdGroupByDateAndVisitedPath(postId);
     }
 
     /**
@@ -35,7 +34,7 @@ public class PostHistoryService implements HistoryService{
      */
     @Override
     public HistoryInfoDTO getHistories(Long postId) {
-        List<SelectHistoryDTO> selectBlogHistoryDTOS = postHistoryQueryRepository.findAllByPostIdGroupByDateAndVisitedPath(postId);
+        List<SelectHistoryDTO> selectBlogHistoryDTOS = postHistoryRepository.findAllByPostIdGroupByDateAndVisitedPath(postId);
         return HistoryInfoDTO.of(postId, selectBlogHistoryDTOS);
     }
 
@@ -46,7 +45,7 @@ public class PostHistoryService implements HistoryService{
      */
     @Override
     public HistoryInfoDTO getHistories(HistorySearchCondition condition) {
-        List<SelectHistoryDTO> selectHistoryDTOS = postHistoryQueryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
+        List<SelectHistoryDTO> selectHistoryDTOS = postHistoryRepository.findAllByConditionGroupByDateAndVisitedPath(condition);
         return HistoryInfoDTO.of(condition.id(), selectHistoryDTOS);
     }
 }

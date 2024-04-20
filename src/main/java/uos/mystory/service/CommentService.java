@@ -10,20 +10,17 @@ import uos.mystory.domain.Comment;
 import uos.mystory.dto.mapping.insert.InsertCommentDTO;
 import uos.mystory.dto.mapping.select.SelectCommentInfoDTO;
 import uos.mystory.dto.mapping.update.UpdateCommentDTO;
-import uos.mystory.dto.request.PageDTO;
-import uos.mystory.dto.response.ResponseCommentDTO;
 import uos.mystory.exception.ResourceNotFoundException;
 import uos.mystory.exception.massage.MessageManager;
 import uos.mystory.repository.CommentRepository;
 import uos.mystory.repository.condition.CommentSearchCondition;
-import uos.mystory.repository.querydsl.CommentQueryRepository;
+import uos.mystory.repository.querydsl.CommentQueryRepositoryImpl;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final CommentQueryRepository commentQueryRepository;
 
     /**
      * @title 댓글 생성하기
@@ -61,7 +58,7 @@ public class CommentService {
      */
     @Transactional(readOnly = true)
     public SelectCommentInfoDTO getCommentInfo(Long id) {
-        return commentQueryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.comment")));
+        return commentRepository.findDtoById(id).orElseThrow(() -> new ResourceNotFoundException(MessageManager.getMessage("error.notfound.comment")));
     }
 
     /**
@@ -72,7 +69,7 @@ public class CommentService {
      */
     @Transactional(readOnly = true)
     public Page<SelectCommentInfoDTO> getCommentsByContidion(CommentSearchCondition condition, Pageable pageable){
-        return commentQueryRepository.findAll(condition, pageable);
+        return commentRepository.findAll(condition, pageable);
     }
 
     /**
